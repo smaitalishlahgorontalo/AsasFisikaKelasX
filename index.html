@@ -1,0 +1,2555 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>CBT ASAS Ganjil 2026/2027 - Fisika Kelas X | SMA IT Al Ishlah</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              200: '#a7f3d0',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              800: '#065f46',
+              900: '#064e3b',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #f1f5f9;
+      color: #0f172a;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Mencegah seleksi teks berlebihan saat ujian */
+    .exam-protected {
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+
+    /* Animasi halus */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in {
+      animation: fadeIn 0.25s ease-out forwards;
+    }
+
+    /* Styling tabel soal */
+    .exam-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+      font-size: 0.9rem;
+    }
+    .exam-table th, .exam-table td {
+      border: 1px solid #cbd5e1;
+      padding: 0.6rem 0.75rem;
+      text-align: left;
+    }
+    .exam-table th {
+      background-color: #ecfdf5;
+      color: #065f46;
+      font-weight: 700;
+    }
+    .exam-table tr:nth-child(even) td {
+      background-color: #f8fafc;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased selection:bg-brand-600 selection:text-white">
+
+  <!-- =====================================================================
+       LOADING OVERLAY GLOBAL (SAAT FETCH DATA SISWA / KIRIM JAWABAN)
+       ===================================================================== -->
+  <div id="global-loader" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 text-center animate-fade-in">
+      <div class="w-14 h-14 mx-auto mb-4 relative flex items-center justify-center">
+        <div class="absolute inset-0 rounded-full border-4 border-brand-100"></div>
+        <div class="absolute inset-0 rounded-full border-4 border-brand-600 border-t-transparent animate-spin"></div>
+        <svg class="w-6 h-6 text-brand-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+        </svg>
+      </div>
+      <h3 id="loader-title" class="text-lg font-bold text-slate-800">Memuat Data Ujian...</h3>
+      <p id="loader-subtitle" class="text-sm text-slate-500 mt-1">Menghubungkan ke server SMA IT Al Ishlah</p>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       CUSTOM MODAL DIALOG (KONFIRMASI, PERINGATAN ANTI-CURANG, NOTIFIKASI)
+       ===================================================================== -->
+  <div id="custom-modal" class="fixed inset-0 z-50 bg-slate-900/65 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden animate-fade-in border border-slate-200">
+      <div id="modal-header-bar" class="h-2 bg-brand-600"></div>
+      <div class="p-6">
+        <div class="flex items-start gap-4">
+          <div id="modal-icon-box" class="w-12 h-12 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center shrink-0">
+            <!-- Icon dinamis -->
+          </div>
+          <div class="flex-1">
+            <h3 id="modal-title" class="text-lg font-bold text-slate-900 leading-snug">Konfirmasi</h3>
+            <div id="modal-body" class="text-sm text-slate-600 mt-2 leading-relaxed space-y-2"></div>
+          </div>
+        </div>
+        <div id="modal-actions" class="mt-6 flex flex-col-reverse sm:flex-row sm:justify-end gap-2.5">
+          <!-- Tombol dinamis -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       VIEW 1: HALAMAN LOGIN PESERTA UJIAN
+       ===================================================================== -->
+  <main id="view-login" class="flex-1 flex items-center justify-center p-4 sm:p-6 bg-gradient-to-br from-brand-900 via-brand-800 to-slate-900">
+    <div class="w-full max-w-lg bg-white rounded-3xl shadow-2xl overflow-hidden border border-white/20 animate-fade-in">
+      <!-- Header Identitas Sekolah -->
+      <div class="bg-gradient-to-r from-brand-800 to-brand-700 px-6 py-7 text-center text-white relative overflow-hidden">
+        <div class="absolute -right-8 -top-8 w-32 h-32 rounded-full bg-white/5"></div>
+        <div class="absolute -left-10 -bottom-10 w-36 h-36 rounded-full bg-white/5"></div>
+        
+        <div class="relative z-10 flex flex-col items-center">
+          <!-- Logo Sekolah dengan Fallback -->
+          <div class="w-20 h-20 rounded-2xl bg-white p-2 shadow-lg flex items-center justify-center mb-3">
+            <img 
+              src="https://iili.io/Ce8iqts.png" 
+              alt="Logo SMA Islam Terpadu Al Ishlah" 
+              class="w-full h-full object-contain"
+              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+            />
+            <div class="hidden w-full h-full items-center justify-center bg-brand-50 rounded-xl text-brand-700 font-extrabold text-xl">
+              <svg class="w-11 h-11 text-brand-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 3L2 8l10 5 10-5-10-5z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 10.5v5.5c0 1.657 2.686 3 6 3s6-1.343 6-3v-5.5" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M22 8v6" />
+              </svg>
+            </div>
+          </div>
+
+          <span class="inline-block px-3 py-1 rounded-full bg-white/15 text-brand-100 text-xs font-semibold tracking-wider uppercase mb-1.5">
+            Computer-Based Test (CBT)
+          </span>
+          <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight">SMA Islam Terpadu Al Ishlah</h1>
+          <p class="text-brand-100 text-xs sm:text-sm mt-1 font-medium">
+            Asesmen Sumatif Akhir Semester (ASAS) Ganjil 2026/2027
+          </p>
+        </div>
+      </div>
+
+      <!-- Informasi Ujian Ringkas -->
+      <div class="grid grid-cols-3 divide-x divide-slate-200 bg-slate-50 border-b border-slate-200 text-center py-3 px-2 text-xs">
+        <div>
+          <span class="text-slate-400 block">Kelas / Fase</span>
+          <span class="font-bold text-slate-700">Kelas X / Fase E</span>
+        </div>
+        <div>
+          <span class="text-slate-400 block">Mata Pelajaran</span>
+          <span class="font-bold text-brand-700">Fisika</span>
+        </div>
+        <div>
+          <span class="text-slate-400 block">Alokasi Waktu</span>
+          <span class="font-bold text-slate-700">60 Menit</span>
+        </div>
+      </div>
+
+      <!-- Form Login -->
+      <div class="p-6 sm:p-8 space-y-5">
+        <!-- Banner Status Koneksi Server -->
+        <div id="connection-banner" class="hidden rounded-xl p-3 text-xs flex items-start gap-2.5 border">
+          <!-- Diisi oleh JS -->
+        </div>
+
+        <!-- Pilih Nama Siswa (Searchable Dropdown) -->
+        <div class="relative" id="student-combobox-wrapper">
+          <label class="block text-sm font-bold text-slate-700 mb-1.5">
+            Nama Peserta Didik <span class="text-rose-500">*</span>
+          </label>
+          <div class="relative">
+            <input 
+              type="text" 
+              id="student-search-input" 
+              autocomplete="off"
+              placeholder="Ketik atau pilih nama lengkap Anda..."
+              class="w-full pl-10 pr-10 py-3 rounded-xl border border-slate-300 bg-white text-slate-800 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition"
+            />
+            <svg class="w-5 h-5 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <button type="button" id="student-dropdown-toggle" aria-label="Buka daftar nama" class="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+          </div>
+          
+          <!-- Dropdown List Nama Siswa -->
+          <div id="student-dropdown-list" class="hidden absolute left-0 right-0 mt-1.5 max-h-56 overflow-y-auto bg-white rounded-xl shadow-xl border border-slate-200 z-30 divide-y divide-slate-100">
+            <!-- Diisi otomatis via JS -->
+          </div>
+          <p id="selected-student-badge" class="hidden mt-1.5 text-xs text-brand-700 font-semibold flex items-center gap-1">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+            <span>Terpilih: <strong id="selected-student-text"></strong></span>
+          </p>
+        </div>
+
+        <!-- Pilih Mata Pelajaran -->
+        <div>
+          <label for="subject-select" class="block text-sm font-bold text-slate-700 mb-1.5">
+            Mata Pelajaran <span class="text-rose-500">*</span>
+          </label>
+          <div class="relative">
+            <select 
+              id="subject-select"
+              class="w-full appearance-none pl-4 pr-10 py-3 rounded-xl border border-slate-300 bg-white text-slate-800 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition"
+            >
+              <option value="Fisika">Fisika (Kelas X / Fase E)</option>
+            </select>
+            <svg class="w-5 h-5 text-slate-400 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </div>
+        </div>
+
+        <!-- Tata Tertib Singkat -->
+        <div class="bg-amber-50 border border-amber-200/80 rounded-2xl p-4 text-xs text-amber-900 space-y-1.5">
+          <div class="font-bold flex items-center gap-1.5 text-amber-800">
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>Tata Tertib & Integritas Ujian</span>
+          </div>
+          <ul class="list-disc list-inside space-y-1 text-amber-800/90 leading-relaxed">
+            <li>Awali pengerjaan dengan membaca <em>Basmalah</em> dan berdoa.</li>
+            <li>Sistem mendeteksi perpindahan tab/aplikasi secara otomatis.</li>
+            <li>Jawaban tersimpan otomatis di perangkat selama ujian berlangsung.</li>
+            <li>Ujian akan dikumpulkan secara otomatis apabila waktu 60 menit habis.</li>
+          </ul>
+        </div>
+
+        <!-- Tombol Mulai Ujian -->
+        <button 
+          type="button" 
+          id="btn-start-exam"
+          class="w-full py-3.5 px-6 rounded-xl bg-brand-700 hover:bg-brand-800 active:scale-[0.99] text-white font-bold text-sm sm:text-base shadow-lg shadow-brand-700/25 transition flex items-center justify-center gap-2 cursor-pointer"
+        >
+          <span>Mulai Ujian Sekarang</span>
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <!-- =====================================================================
+       VIEW 2: HALAMAN PENGERJAAN UJIAN (CBT INTERFACE)
+       ===================================================================== -->
+  <div id="view-exam" class="hidden flex-1 flex-col min-h-screen exam-protected">
+    <!-- Sticky Header Ujian -->
+    <header class="sticky top-0 z-30 bg-white border-b border-slate-200 shadow-sm">
+      <div class="max-w-7xl mx-auto px-3 sm:px-6 h-16 flex items-center justify-between gap-3">
+        <!-- Kiri: Logo & Info Mapel -->
+        <div class="flex items-center gap-3 min-w-0">
+          <div class="w-10 h-10 rounded-xl bg-brand-50 border border-brand-100 p-1 flex items-center justify-center shrink-0">
+            <img 
+              src="https://iili.io/Ce8iqts.png" 
+              alt="Logo" 
+              class="w-full h-full object-contain"
+              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+            />
+            <span class="hidden text-brand-700 font-extrabold text-xs">IT</span>
+          </div>
+          <div class="min-w-0">
+            <div class="flex items-center gap-2">
+              <h2 class="text-sm sm:text-base font-extrabold text-slate-800 truncate">ASAS Fisika — Kelas X</h2>
+              <span class="hidden md:inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold bg-brand-50 text-brand-700 border border-brand-200">
+                Fase E
+              </span>
+            </div>
+            <p id="header-student-name" class="text-xs text-slate-500 truncate font-medium">Peserta Didik</p>
+          </div>
+        </div>
+
+        <!-- Kanan: Badge Pelanggaran, Timer & Tombol Daftar Soal (Mobile) -->
+        <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+          <!-- Indikator Pindah Tab -->
+          <div id="tab-warning-badge" class="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-bold" title="Jumlah terdeteksi keluar tab/aplikasi">
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            <span id="tab-warning-count">0</span>
+          </div>
+
+          <!-- Timer Hitung Mundur -->
+          <div id="timer-box" class="flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-slate-900 text-white font-mono text-sm sm:text-base font-bold shadow-sm transition-colors">
+            <svg class="w-4 h-4 text-brand-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span id="timer-display">60:00</span>
+          </div>
+
+          <!-- Tombol Buka Grid Nomor Soal di HP/Tablet -->
+          <button 
+            type="button" 
+            id="btn-toggle-nav-drawer"
+            class="lg:hidden inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-brand-50 hover:bg-brand-100 text-brand-800 border border-brand-200 text-xs font-bold transition"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+            </svg>
+            <span>Soal</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Konten Utama Ujian (2 Kolom di Desktop, 1 Kolom di Mobile) -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 py-5 sm:py-7 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      
+      <!-- Kolom Kiri: Kartu Soal Aktif -->
+      <section class="lg:col-span-8 bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
+        <!-- Header Nomor & Tipe Soal -->
+        <div class="px-5 sm:px-7 py-4 bg-slate-50 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2">
+          <div class="flex items-center gap-2.5">
+            <span class="inline-flex items-center justify-center px-3 py-1 rounded-xl bg-brand-700 text-white font-extrabold text-sm">
+              Soal No. <span id="current-q-number" class="ml-1">1</span>
+            </span>
+            <span id="current-q-type-badge" class="px-3 py-1 rounded-xl bg-indigo-50 text-indigo-700 border border-indigo-200 text-xs font-bold">
+              Pilihan Ganda
+            </span>
+          </div>
+          <div class="flex items-center gap-2 text-xs text-slate-500 font-medium">
+            <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span>Tersimpan otomatis</span>
+          </div>
+        </div>
+
+        <!-- Isi Pertanyaan, Gambar/Tabel & Opsi Jawaban -->
+        <div id="question-container" class="p-5 sm:p-7 space-y-6 text-slate-800 leading-relaxed text-[15px] sm:text-base">
+          <!-- Dirender secara dinamis oleh JS -->
+        </div>
+
+        <!-- Footer Navigasi Soal -->
+        <div class="px-5 sm:px-7 py-4 bg-slate-50 border-t border-slate-200 flex flex-wrap items-center justify-between gap-3">
+          <button 
+            type="button" 
+            id="btn-prev"
+            class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-700 border border-slate-300 font-bold text-sm transition cursor-pointer"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+            <span>Sebelumnya</span>
+          </button>
+
+          <!-- Tombol Ragu-ragu -->
+          <label id="btn-doubtful-label" class="inline-flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-300 text-amber-900 font-bold text-sm cursor-pointer select-none transition">
+            <input type="checkbox" id="checkbox-doubtful" class="w-4 h-4 rounded accent-amber-500 cursor-pointer" />
+            <span>Ragu-ragu</span>
+          </label>
+
+          <button 
+            type="button" 
+            id="btn-next"
+            class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-brand-700 hover:bg-brand-800 text-white font-bold text-sm shadow-sm transition cursor-pointer"
+          >
+            <span id="btn-next-text">Selanjutnya</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </div>
+      </section>
+
+      <!-- Kolom Kanan: Panel Navigasi Nomor Soal (Desktop Sticky + Mobile Drawer) -->
+      <aside id="nav-sidebar" class="fixed inset-0 z-40 lg:static lg:z-auto lg:col-span-4 hidden lg:block bg-slate-900/60 lg:bg-transparent backdrop-blur-xs lg:backdrop-blur-none">
+        <div class="ml-auto lg:ml-0 w-80 max-w-[88vw] lg:w-full h-full lg:h-auto bg-white lg:rounded-3xl shadow-2xl lg:shadow-sm border-l lg:border border-slate-200 flex flex-col lg:sticky lg:top-22 overflow-hidden">
+          <!-- Header Panel Navigasi -->
+          <div class="px-5 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+            <div>
+              <h3 class="font-extrabold text-slate-800 text-sm">Navigasi Nomor Soal</h3>
+              <p id="nav-progress-summary" class="text-xs text-slate-500 mt-0.5">0 dari 25 soal terjawab</p>
+            </div>
+            <button type="button" id="btn-close-nav-drawer" class="lg:hidden p-1.5 rounded-lg text-slate-500 hover:bg-slate-200">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          <!-- Grid Nomor Soal -->
+          <div class="p-5 overflow-y-auto flex-1">
+            <div id="question-nav-grid" class="grid grid-cols-5 gap-2.5">
+              <!-- Tombol nomor 1..25 dirender via JS -->
+            </div>
+
+            <!-- Keterangan Warna -->
+            <div class="mt-6 pt-4 border-t border-slate-100 grid grid-cols-3 gap-2 text-[11px] font-semibold text-slate-600">
+              <div class="flex items-center gap-1.5">
+                <span class="w-3.5 h-3.5 rounded-md bg-emerald-600 inline-block shrink-0"></span>
+                <span>Terjawab</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <span class="w-3.5 h-3.5 rounded-md bg-amber-400 inline-block shrink-0"></span>
+                <span>Ragu-ragu</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <span class="w-3.5 h-3.5 rounded-md bg-slate-200 border border-slate-300 inline-block shrink-0"></span>
+                <span>Belum</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tombol Kumpulkan Ujian -->
+          <div class="p-5 bg-slate-50 border-t border-slate-200">
+            <button 
+              type="button" 
+              id="btn-submit-exam"
+              class="w-full py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] text-white font-extrabold text-sm shadow-lg shadow-emerald-600/20 transition flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span>Kumpulkan Ujian</span>
+            </button>
+          </div>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <!-- =====================================================================
+       VIEW 3: HALAMAN BUKTI PENGUMPULAN UJIAN (TANPA MENAMPILKAN NILAI)
+       ===================================================================== -->
+  <section id="view-receipt" class="hidden flex-1 items-center justify-center p-4 sm:p-6 bg-gradient-to-br from-slate-100 to-brand-50">
+    <div class="max-w-lg w-full bg-white rounded-3xl shadow-xl border border-slate-200 overflow-hidden animate-fade-in">
+      <div class="bg-brand-700 px-6 py-8 text-center text-white">
+        <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-white/15 backdrop-blur-xs flex items-center justify-center">
+          <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+          </svg>
+        </div>
+        <h2 class="text-2xl font-extrabold">Ujian Berhasil Dikumpulkan!</h2>
+        <p class="text-brand-100 text-sm mt-1">Alhamdulillah, jawaban Anda telah tersimpan di server sekolah.</p>
+      </div>
+
+      <div class="p-6 sm:p-8 space-y-5">
+        <div class="bg-slate-50 rounded-2xl border border-slate-200 p-4 space-y-3 text-sm">
+          <div class="flex justify-between gap-4 border-b border-slate-200/80 pb-2.5">
+            <span class="text-slate-500">Sekolah</span>
+            <span class="font-bold text-slate-800 text-right">SMA Islam Terpadu Al Ishlah</span>
+          </div>
+          <div class="flex justify-between gap-4 border-b border-slate-200/80 pb-2.5">
+            <span class="text-slate-500">Nama Peserta</span>
+            <span id="receipt-name" class="font-bold text-slate-800 text-right">-</span>
+          </div>
+          <div class="flex justify-between gap-4 border-b border-slate-200/80 pb-2.5">
+            <span class="text-slate-500">Kelas / Fase</span>
+            <span class="font-bold text-slate-800 text-right">Kelas X / Fase E</span>
+          </div>
+          <div class="flex justify-between gap-4 border-b border-slate-200/80 pb-2.5">
+            <span class="text-slate-500">Mata Pelajaran</span>
+            <span id="receipt-subject" class="font-bold text-brand-700 text-right">Fisika</span>
+          </div>
+          <div class="flex justify-between gap-4 border-b border-slate-200/80 pb-2.5">
+            <span class="text-slate-500">Waktu Selesai</span>
+            <span id="receipt-timestamp" class="font-semibold text-slate-700 text-right">-</span>
+          </div>
+          <div class="flex justify-between gap-4 border-b border-slate-200/80 pb-2.5">
+            <span class="text-slate-500">Durasi Pengerjaan</span>
+            <span id="receipt-duration" class="font-semibold text-slate-700 text-right">-</span>
+          </div>
+          <div class="flex justify-between gap-4">
+            <span class="text-slate-500">Status Server</span>
+            <span id="receipt-server-status" class="inline-flex items-center gap-1.5 font-bold text-emerald-700">
+              <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+              Tersimpan Resmi
+            </span>
+          </div>
+        </div>
+
+        <div class="p-4 rounded-xl bg-brand-50 border border-brand-200 text-xs text-brand-900 leading-relaxed text-center">
+          Hasil asesmen akan direkap dan diumumkan oleh guru mata pelajaran sesuai jadwal sekolah. Silakan tutup halaman ini atau kembali ke halaman utama.
+        </div>
+
+        <button 
+          type="button" 
+          id="btn-back-home"
+          class="w-full py-3 px-5 rounded-xl bg-slate-800 hover:bg-slate-900 text-white font-bold text-sm transition cursor-pointer"
+        >
+          Kembali ke Halaman Awal
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================================
+       SCRIPT UTAMA APLIKASI CBT
+       ===================================================================== -->
+  <script>
+    /**
+     * KONFIGURASI URL GOOGLE APPS SCRIPT WEB APP
+     * Ganti konstanta di bawah ini dengan URL Web App Google Apps Script Anda.
+     */
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbxhgC1Dwpg3nPIVRH4BMzNHzREHaa2Rf_VekzMcQfMRC6004EReJiYGZVLfxHNSg7bfeQ/exec";
+
+    /**
+     * IDENTITAS & PENGATURAN UJIAN
+     */
+    const EXAM_CONFIG = {
+      schoolName: "SMA Islam Terpadu Al Ishlah",
+      examTitle: "Asesmen Sumatif Akhir Semester (ASAS) Ganjil 2026/2027",
+      classPhase: "Kelas X / Fase E",
+      defaultSubject: "Fisika",
+      durationSeconds: 60 * 60, // 60 menit = 3600 detik
+      storagePrefix: "cbt_alishlah_asas2026_"
+    };
+
+    /**
+     * ILUSTRASI SVG PRESISI UNTUK SOAL-SOAL BERGAMBAR
+     */
+    const SVG_ASSETS = {
+      mistar: `
+        <div class="my-4 p-4 bg-slate-50 border border-slate-200 rounded-2xl overflow-x-auto">
+          <svg viewBox="0 0 760 220" class="w-full min-w-[540px] max-w-2xl mx-auto h-auto" role="img" aria-label="Gambar Mistar 0 sampai 30 cm">
+            <!-- Mistar 1: Utuh 0 - 30 cm -->
+            <g transform="translate(20, 15)">
+              <rect x="0" y="0" width="720" height="50" rx="4" fill="#cbd5e1" stroke="#334155" stroke-width="1.5"/>
+              <g id="ruler-ticks-1" stroke="#0f172a">
+                ${Array.from({ length: 301 }, (_, mm) => {
+                  const x = 15 + mm * 2.3;
+                  const isCm = mm % 10 === 0;
+                  const isHalf = mm % 5 === 0 && !isCm;
+                  const h = isCm ? 18 : (isHalf ? 13 : 9);
+                  const sw = isCm ? 1.4 : 0.8;
+                  const cmVal = mm / 10;
+                  return `<line x1="${x}" y1="0" x2="${x}" y2="${h}" stroke-width="${sw}"/>` +
+                    (isCm ? `<text x="${x}" y="33" font-size="9.5" font-family="sans-serif" font-weight="600" text-anchor="middle" fill="#0f172a">${cmVal === 0 ? '0 cm' : cmVal}</text>` : '');
+                }).join('')}
+              </g>
+            </g>
+            <!-- Mistar 2: Terpotong -->
+            <g transform="translate(20, 85)">
+              <path d="M0,0 H190 L182,12 L195,25 L184,38 L192,50 H0 Z" fill="#cbd5e1" stroke="#334155" stroke-width="1.5"/>
+              <path d="M210,0 H410 V50 H212 L204,38 L215,25 L202,12 Z" fill="#cbd5e1" stroke="#334155" stroke-width="1.5"/>
+              ${Array.from({ length: 76 }, (_, mm) => {
+                const x = 15 + mm * 2.3;
+                const isCm = mm % 10 === 0;
+                const h = isCm ? 18 : (mm % 5 === 0 ? 13 : 9);
+                return `<line x1="${x}" y1="0" x2="${x}" y2="${h}" stroke="#0f172a" stroke-width="${isCm ? 1.4 : 0.8}"/>` +
+                  (isCm ? `<text x="${x}" y="33" font-size="9.5" font-family="sans-serif" font-weight="600" text-anchor="middle" fill="#0f172a">${mm === 0 ? '0 cm' : mm/10}</text>` : '');
+              }).join('')}
+              ${Array.from({ length: 81 }, (_, idx) => {
+                const mm = 220 + idx;
+                const x = 218 + idx * 2.3;
+                const isCm = mm % 10 === 0;
+                const h = isCm ? 18 : (mm % 5 === 0 ? 13 : 9);
+                return `<line x1="${x}" y1="0" x2="${x}" y2="${h}" stroke="#0f172a" stroke-width="${isCm ? 1.4 : 0.8}"/>` +
+                  (isCm ? `<text x="${x}" y="33" font-size="9.5" font-family="sans-serif" font-weight="600" text-anchor="middle" fill="#0f172a">${mm/10}</text>` : '');
+              }).join('')}
+            </g>
+            <!-- Mistar 3: Skala Ganda -->
+            <g transform="translate(20, 155)">
+              <rect x="0" y="0" width="720" height="50" rx="4" fill="#cbd5e1" stroke="#334155" stroke-width="1.5"/>
+              ${Array.from({ length: 301 }, (_, mm) => {
+                const x = 15 + mm * 2.3;
+                const isCm = mm % 10 === 0;
+                const h = isCm ? 14 : 8;
+                return `<line x1="${x}" y1="0" x2="${x}" y2="${h}" stroke="#0f172a" stroke-width="${isCm ? 1.3 : 0.7}"/>` +
+                  `<line x1="${x}" y1="50" x2="${x}" y2="${50 - h}" stroke="#0f172a" stroke-width="${isCm ? 1.3 : 0.7}"/>` +
+                  (isCm ? `<text x="${x}" y="28" font-size="9" font-family="sans-serif" font-weight="600" text-anchor="middle" fill="#0f172a">${mm === 0 ? '0 cm' : mm/10}</text>` : '');
+              }).join('')}
+            </g>
+          </svg>
+        </div>
+      `,
+      jangkaSorong: `
+        <div class="my-4 p-4 bg-slate-50 border border-slate-200 rounded-2xl overflow-x-auto">
+          <svg viewBox="0 0 680 230" class="w-full min-w-[460px] max-w-xl mx-auto h-auto" role="img" aria-label="Gambar Jangka Sorong">
+            <!-- Tangkai Ukur Kedalaman -->
+            <rect x="260" y="96" width="395" height="8" fill="#94a3b8" stroke="#334155" stroke-width="1.2"/>
+            <!-- Batang Skala Utama -->
+            <rect x="75" y="78" width="555" height="36" rx="2" fill="#e2e8f0" stroke="#334155" stroke-width="1.5"/>
+            <!-- Rahang Tetap Atas & Bawah -->
+            <path d="M75,78 L75,30 L102,55 L102,78 Z" fill="#cbd5e1" stroke="#334155" stroke-width="1.5"/>
+            <path d="M75,114 L75,205 L95,185 L105,114 Z" fill="#cbd5e1" stroke="#334155" stroke-width="1.5"/>
+            <!-- Skala Utama -->
+            ${Array.from({ length: 161 }, (_, i) => {
+              const x = 115 + i * 3.1;
+              const isCm = i % 10 === 0;
+              const h = isCm ? 13 : (i % 5 === 0 ? 9 : 6);
+              return `<line x1="${x}" y1="114" x2="${x}" y2="${114 - h}" stroke="#0f172a" stroke-width="${isCm ? 1.2 : 0.7}"/>` +
+                (isCm ? `<text x="${x}" y="96" font-size="9.5" font-family="sans-serif" font-weight="700" text-anchor="middle" fill="#0f172a">${i/10}</text>` : '');
+            }).join('')}
+            <!-- Rahang Sorong (Geser) -->
+            <g transform="translate(55, 0)">
+              <!-- Rahang Sorong Atas -->
+              <path d="M75,78 L75,55 L102,30 L102,78 Z" fill="#94a3b8" stroke="#334155" stroke-width="1.5"/>
+              <!-- Badan Geser -->
+              <rect x="75" y="72" width="145" height="58" rx="3" fill="#cbd5e1" fill-opacity="0.92" stroke="#334155" stroke-width="1.5"/>
+              <!-- Tombol Kunci Atas -->
+              <rect x="138" y="58" width="12" height="14" fill="#64748b" stroke="#1e293b" stroke-width="1.2"/>
+              <rect x="132" y="52" width="24" height="7" rx="2" fill="#475569" stroke="#1e293b" stroke-width="1.2"/>
+              <!-- Rahang Sorong Bawah -->
+              <path d="M75,130 L85,185 L105,205 L105,130 Z" fill="#94a3b8" stroke="#334155" stroke-width="1.5"/>
+              <!-- Jendela Skala Nonius -->
+              <rect x="85" y="106" width="122" height="20" rx="2" fill="#f8fafc" stroke="#475569" stroke-width="1"/>
+              ${Array.from({ length: 11 }, (_, n) => {
+                const nx = 93 + n * 9.5;
+                return `<line x1="${nx}" y1="106" x2="${nx}" y2="114" stroke="#0f172a" stroke-width="1"/>` +
+                  `<text x="${nx}" y="123" font-size="7.5" font-family="sans-serif" font-weight="700" text-anchor="middle" fill="#0f172a">${n}</text>`;
+              }).join('')}
+            </g>
+          </svg>
+        </div>
+      `,
+      flammableSign: `
+        <div class="my-4 flex justify-center">
+          <div class="p-3 bg-white border border-slate-200 rounded-2xl shadow-xs">
+            <svg viewBox="0 0 180 180" class="w-36 h-36 sm:w-40 sm:h-40" role="img" aria-label="Simbol Bahaya Mudah Terbakar">
+              <rect x="6" y="6" width="168" height="168" rx="6" fill="#f97316" stroke="#0f172a" stroke-width="6"/>
+              <!-- Ikon Nyala Api -->
+              <path d="M90 28 C95 48, 118 62, 115 88 C122 80, 126 70, 125 60 C138 78, 140 108, 123 128 C115 137, 104 142, 90 142 C74 142, 60 135, 53 121 C44 103, 50 78, 66 64 C64 75, 68 83, 74 88 C70 66, 78 46, 90 28 Z" fill="#0f172a"/>
+              <path d="M90 86 C97 98, 106 108, 102 122 C99 131, 93 135, 88 135 C80 135, 74 128, 75 118 C76 106, 84 97, 90 86 Z" fill="#f97316"/>
+              <line x1="52" y1="149" x2="128" y2="149" stroke="#0f172a" stroke-width="5" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </div>
+      `,
+      soal19Options: {
+        A: `
+          <div class="flex items-center gap-3">
+            <svg viewBox="0 0 160 64" class="w-32 h-14 bg-slate-50 rounded-lg border border-slate-200 p-1 shrink-0">
+              <rect x="18" y="22" width="130" height="11" fill="#cbd5e1" stroke="#334155" stroke-width="1.2"/>
+              <path d="M18,22 L18,8 L27,16 L27,22 Z" fill="#94a3b8" stroke="#334155" stroke-width="1.2"/>
+              <path d="M18,33 L18,56 L25,50 L28,33 Z" fill="#94a3b8" stroke="#334155" stroke-width="1.2"/>
+              <rect x="36" y="19" width="38" height="17" fill="#94a3b8" stroke="#334155" stroke-width="1.2"/>
+              <path d="M36,36 L40,56 L46,50 L46,36 Z" fill="#64748b" stroke="#334155" stroke-width="1.2"/>
+            </svg>
+            <span class="text-xs sm:text-sm font-semibold text-slate-700">Alat Ukur 1 (Jangka Sorong)</span>
+          </div>
+        `,
+        B: `
+          <div class="flex items-center gap-3">
+            <svg viewBox="0 0 160 64" class="w-32 h-14 bg-slate-50 rounded-lg border border-slate-200 p-1 shrink-0">
+              <path d="M22,22 C10,22 10,54 36,54 C54,54 58,42 58,34 L58,24 L48,24 L48,34 C48,40 44,44 36,44 C22,44 22,30 28,28 Z" fill="#334155"/>
+              <rect x="28" y="23" width="18" height="6" fill="#94a3b8" stroke="#1e293b"/>
+              <rect x="58" y="21" width="44" height="11" fill="#cbd5e1" stroke="#334155"/>
+              <rect x="102" y="18" width="34" height="17" rx="2" fill="#64748b" stroke="#1e293b"/>
+              <rect x="136" y="21" width="12" height="11" rx="1" fill="#94a3b8" stroke="#1e293b"/>
+            </svg>
+            <span class="text-xs sm:text-sm font-semibold text-slate-700">Alat Ukur 2 (Mikrometer Sekrup)</span>
+          </div>
+        `,
+        C: `
+          <div class="flex items-center gap-3">
+            <svg viewBox="0 0 160 64" class="w-32 h-14 bg-slate-50 rounded-lg border border-slate-200 p-1 shrink-0">
+              <rect x="25" y="52" width="110" height="6" rx="2" fill="#78716c"/>
+              <rect x="76" y="18" width="8" height="34" fill="#a8a29e"/>
+              <rect x="30" y="14" width="100" height="6" rx="2" fill="#475569"/>
+              <path d="M36,20 L26,38 L46,38 Z" fill="none" stroke="#64748b" stroke-width="1.2"/>
+              <ellipse cx="36" cy="40" rx="14" ry="4" fill="#cbd5e1" stroke="#475569"/>
+            </svg>
+            <span class="text-xs sm:text-sm font-semibold text-slate-700">Alat Ukur 3 (Neraca Lengan Gantung)</span>
+          </div>
+        `,
+        D: `
+          <div class="flex items-center gap-3">
+            <svg viewBox="0 0 160 64" class="w-32 h-14 bg-slate-50 rounded-lg border border-slate-200 p-1 shrink-0">
+              <!-- Badan Timbangan Pasar / Bebek -->
+              <rect x="22" y="34" width="108" height="14" rx="3" fill="#dc2626" stroke="#7f1d1d" stroke-width="1.2"/>
+              <!-- Wadah Mangkuk Kiri -->
+              <path d="M22,12 L64,12 L56,28 L30,28 Z" fill="#cbd5e1" stroke="#475569" stroke-width="1.2"/>
+              <!-- Dudukan Anak Timbangan Kanan -->
+              <rect x="92" y="24" width="36" height="5" rx="1" fill="#ef4444" stroke="#7f1d1d"/>
+              <!-- Anak Timbangan Kuningan -->
+              <rect x="98" y="14" width="10" height="10" rx="1" fill="#eab308" stroke="#854d0e"/>
+              <rect x="112" y="17" width="8" height="7" rx="1" fill="#eab308" stroke="#854d0e"/>
+              <!-- Paruh Penunjuk -->
+              <polygon points="72,22 76,30 68,30" fill="#facc15"/>
+              <polygon points="80,22 84,30 76,30" fill="#facc15"/>
+            </svg>
+            <span class="text-xs sm:text-sm font-semibold text-slate-700">Alat Ukur 4 (Timbangan Meja / Pasar dengan Anak Timbangan)</span>
+          </div>
+        `,
+        E: `
+          <div class="flex items-center gap-3">
+            <svg viewBox="0 0 160 64" class="w-32 h-14 bg-slate-50 rounded-lg border border-slate-200 p-1 shrink-0">
+              <path d="M20,52 L140,52 L135,44 L38,44 L34,26 L22,26 Z" fill="#cbd5e1" stroke="#475569" stroke-width="1.2"/>
+              <ellipse cx="32" cy="18" rx="18" ry="4" fill="#94a3b8" stroke="#334155"/>
+              <rect x="29" y="18" width="6" height="8" fill="#64748b"/>
+              <rect x="48" y="20" width="90" height="8" rx="1" fill="#1e293b"/>
+              <rect x="65" y="19" width="8" height="10" fill="#e2e8f0" stroke="#0f172a"/>
+              <rect x="92" y="19" width="8" height="10" fill="#e2e8f0" stroke="#0f172a"/>
+            </svg>
+            <span class="text-xs sm:text-sm font-semibold text-slate-700">Alat Ukur 5 (Neraca Ohaus Tiga Lengan)</span>
+          </div>
+        `
+      }
+    };
+
+    /**
+     * BANK SOAL LENGKAP ASAS FISIKA KELAS X (25 BUTIR SOAL SESUAI DOKUMEN)
+     * Tipe yang didukung otomatis:
+     * - 'multiple_choice'         : Pilihan Ganda tunggal (radio)
+     * - 'multiple_choice_complex' : Pilihan Ganda Kompleks (checkbox multi-jawaban)
+     * - 'true_false'              : Benar / Salah per pernyataan
+     */
+    const QUESTION_BANK = [
+      // ==================== SOAL 1 ====================
+      {
+        id: 1,
+        type: "multiple_choice_complex",
+        topic: "Hakikat Fisika, Besaran, dan Pengukurannya",
+        stem: `
+          <p>Dalam kegiatan praktikum Fisika di laboratorium, pengukuran merupakan langkah dasar yang sangat penting untuk memperoleh data kuantitatif dari suatu objek. Setiap besaran fisika memerlukan alat ukur yang spesifik agar hasil pengukurannya akurat dan sesuai dengan satuan yang ditetapkan. Perhatikan gambar berikut.</p>
+          ${SVG_ASSETS.mistar}
+          <p class="font-semibold text-slate-900">Berdasarkan gambar di atas, manakah pernyataan yang tepat mengenai identitas serta fungsi alat ukur tersebut? <span class="text-brand-700 font-bold">(Pilih lebih dari satu jawaban yang benar)</span></p>
+        `,
+        options: [
+          { key: "A", text: "Nama alat ukur pada gambar adalah mistar." },
+          { key: "B", text: "Alat tersebut digunakan untuk mengukur besaran pokok panjang." },
+          { key: "C", text: "Alat tersebut digunakan untuk mengukur besaran massa benda." },
+          { key: "D", text: "Skala terkecil yang dimiliki oleh alat ukur tersebut adalah 1 mm (0,1 cm)." },
+          { key: "E", text: "Memiliki skala Utama dan skala Nonius." }
+        ],
+        answerKey: ["A", "B", "D"]
+      },
+
+      // ==================== SOAL 2 ====================
+      {
+        id: 2,
+        type: "multiple_choice_complex",
+        topic: "Hakikat Fisika, Besaran, dan Pengukurannya",
+        stem: `
+          <p>Seorang teknisi hendak mengukur diameter luar sebuah baut, diameter dalam sebuah cincin logam, serta kedalaman lubang kecil pada komponen mesin dengan tingkat ketelitian hingga 0,1 mm (0,01 cm). Untuk keperluan tersebut, ia menggunakan alat ukur yang tampak pada gambar berikut!</p>
+          ${SVG_ASSETS.jangkaSorong}
+          <p class="font-semibold text-slate-900">Berdasarkan narasi dan gambar alat ukur di atas, manakah pernyataan yang tepat untuk menjelaskan karakteristik alat ukur tersebut? <span class="text-brand-700 font-bold">(Pilih lebih dari satu jawaban yang benar)</span></p>
+        `,
+        options: [
+          { key: "A", text: "Rahang tetap bawah dan rahang sorong bawah digunakan untuk menjepit serta mengukur diameter luar atau ketebalan suatu benda." },
+          { key: "B", text: "Rahang tetap atas dan rahang sorong atas digunakan untuk mengukur diameter dalam suatu benda berongga, seperti cincin atau pipa." },
+          { key: "C", text: "Alat ukur tersebut memiliki tingkat ketelitian yang lebih rendah dibandingkan mistar sehingga kurang tepat digunakan untuk komponen mesin berukuran kecil." },
+          { key: "D", text: "Tangkai ukur kedalaman yang berada di ujung kanan alat tidak memiliki fungsi hanya digunakan untuk memegang jangka sorong saja." },
+          { key: "E", text: "Tombol kunci pada bagian atas berfungsi untuk menahan rahang sorong agar tidak bergeser saat hasil pengukuran pada skala utama dan skala nonius dibaca." }
+        ],
+        answerKey: ["A", "B", "E"]
+      },
+
+      // ==================== SOAL 3 ====================
+      {
+        id: 3,
+        type: "multiple_choice_complex",
+        topic: "Hakikat Fisika, Besaran, dan Pengukurannya",
+        stem: `
+          <p>Dalam Islam, kejujuran dalam menakar dan menimbang barang dagangan merupakan prinsip utama agar transaksi bernilai berkah dan terhindar dari kecurangan yang merugikan pembeli, sebagaimana peringatan Allah SWT dalam QS. Al-Mutaffifin ayat 1–3 tentang larangan mengurangi takaran dan timbangan. Sebagai wujud bakti kepada orang tua sekaligus mengamalkan nilai kejujuran dalam bermuamalah, Nisma membantu ibunya berjualan bumbu dapur dan sayuran di Pasar Minggu. Seorang pelanggan datang dan ingin membeli cabai rawit sebanyak <strong>2 kilogram</strong>. Di lapak dagangannya, ibu Nisma menyimpan beberapa jenis alat ukur massa yang digunakan untuk kebutuhan barang dagangan yang berbeda-beda, mulai dari rempah-rempah hingga karung beras berukuran besar.</p>
+          <p class="font-semibold text-slate-900">Agar proses penimbangan cabai rawit berjalan cepat, akurat, serta tidak merusak alat ukur akibat kelebihan beban (<em>overload</em>), alat ukur manakah yang tepat digunakan oleh Nisma? <span class="text-brand-700 font-bold">(Pilih lebih dari satu jawaban yang benar)</span></p>
+        `,
+        options: [
+          { key: "A", text: "Timbangan digital duduk meja dengan batas ukur maksimal 10 kg dan ketelitian 1 gram." },
+          { key: "B", text: "Neraca Ohaus tiga lengan dengan kapasitas maksimal 311 gram dan ketelitian 0,01 gram." },
+          { key: "C", text: "Timbangan pegas gantung kapasitas 5 kg dengan skala terkecil 100 gram." },
+          { key: "D", text: "Timbangan jarum duduk (timbangan meja/kodok berjarum) dengan kapasitas maksimal 5 kg dan skala terkecil 20 gram." },
+          { key: "E", text: "Timbangan badan digital dengan kapasitas maksimal 150 kg dan skala terkecil 0,1 kg (100 gram)." }
+        ],
+        answerKey: ["A", "C", "D"]
+      },
+
+      // ==================== SOAL 4 ====================
+      {
+        id: 4,
+        type: "multiple_choice_complex",
+        topic: "Hakikat Fisika, Besaran, dan Pengukurannya",
+        stem: `
+          <p>Cahaya merupakan salah satu nikmat besar dari Allah SWT yang memudahkan manusia beraktivitas dan menuntut ilmu, sebagaimana perumpamaan cahaya dalam Al-Qur'an (QS. An-Nur: 35). Untuk mensyukuri nikmat tersebut melalui pengembangan ilmu pengetahuan sekaligus mengamalkan sifat amanah dan ketelitian dalam mengukur (QS. Al-Isra: 35), sekelompok siswa kelas X melakukan pengamatan terhadap sebuah lampu pijar yang dinyalakan di dalam ruangan tertutup. Mereka mencatat beberapa data hasil pengukuran selama percobaan. Data tersebut antara lain:</p>
+          <ul class="list-disc list-inside bg-slate-50 border border-slate-200 rounded-xl p-3.5 my-3 space-y-1 text-sm">
+            <li>Panjang kawat filamen lampu mencapai 5 cm</li>
+            <li>Massa bola lampu sebesar 40 gram</li>
+            <li>Waktu menyala lampu diamati selama 10 menit</li>
+            <li>Suhu permukaan kaca lampu meningkat hingga 65 derajat Celcius</li>
+            <li>Kuat arus listrik yang mengalir terukur sebesar 0,5 Ampere</li>
+            <li>Intensitas cahaya lampu tercatat sebesar 120 Kandela</li>
+            <li>Gas pengisi di dalam tabung lampu diperkirakan berjumlah 0,02 mol</li>
+          </ul>
+          <p class="font-semibold text-slate-900">Berdasarkan narasi hasil pengamatan di atas, manakah pasangan besaran pokok beserta satuan Sistem Internasional (SI) yang tepat? <span class="text-brand-700 font-bold">(Pilih lebih dari satu jawaban yang benar)</span></p>
+        `,
+        options: [
+          { key: "A", text: "Panjang — meter (m)" },
+          { key: "B", text: "Massa — gram (g)" },
+          { key: "C", text: "Suhu — Kelvin (K)" },
+          { key: "D", text: "Kuat arus listrik — Ampere (A)" },
+          { key: "E", text: "Intensitas cahaya — Watt (W)" }
+        ],
+        answerKey: ["A", "C", "D"]
+      },
+
+      // ==================== SOAL 5 ====================
+      {
+        id: 5,
+        type: "multiple_choice_complex",
+        topic: "Hakikat Fisika, Besaran, dan Pengukurannya",
+        stem: `
+          <p>Dalam kegiatan praktikum Fisika di laboratorium, sekelompok siswa kelas X melakukan pengukuran dimensi bidang datar terhadap tiga jenis benda yang berbeda menggunakan alat ukur yang disesuaikan dengan ukuran masing-masing benda. Data hasil pengukuran panjang dan lebar ketiga benda tersebut dicatat dalam tabel berikut:</p>
+          <div class="overflow-x-auto">
+            <table class="exam-table">
+              <thead>
+                <tr>
+                  <th>No</th>
+                  <th>Jenis Benda</th>
+                  <th>Alat Ukur Yang Digunakan</th>
+                  <th>Hasil Pengukuran Panjang (<em>p</em>)</th>
+                  <th>Hasil Pengukuran Lebar (<em>l</em>)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1</td>
+                  <td>Papan Tulis Kelas</td>
+                  <td>Meteran Gulung</td>
+                  <td>240 cm</td>
+                  <td>120 cm</td>
+                </tr>
+                <tr>
+                  <td>2</td>
+                  <td>Buku Paket Fisika</td>
+                  <td>Mistar Plastik</td>
+                  <td>250 mm</td>
+                  <td>175 mm</td>
+                </tr>
+                <tr>
+                  <td>3</td>
+                  <td>Cincin</td>
+                  <td>Jangka Sorong</td>
+                  <td>4,50 cm</td>
+                  <td>2,00 cm</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="font-semibold text-slate-900">Guru meminta kelompok tersebut menyusun laporan praktikum menggunakan standar Sistem Internasional (SI) serta menganalisis karakteristik besaran dari data yang diperoleh sebelum menghitung luas masing-masing permukaan benda. Manakah hasil analisis berikut yang tepat? <span class="text-brand-700 font-bold">(Pilih lebih dari satu jawaban yang benar)</span></p>
+        `,
+        options: [
+          { key: "A", text: "Pada tabel hasil pengukuran tersebut, dimensi panjang (p) termasuk ke dalam kelompok besaran pokok, sedangkan dimensi lebar (l) termasuk ke dalam kelompok besaran turunan karena nilainya selalu lebih kecil daripada ukuran panjang benda." },
+          { key: "B", text: "Meskipun menggunakan tiga alat ukur berbeda dan menghasilkan satuan awal yang beragam (cm dan mm), besaran panjang dan lebar pada ketiga benda tersebut termasuk ke dalam satu jenis besaran pokok yang sama, yaitu panjang." },
+          { key: "C", text: "Agar sesuai dengan satuan Sistem Internasional (SI), hasil pengukuran panjang dan lebar buku paket Fisika harus dikonversi menjadi 0,25 m dan 0,175 m." },
+          { key: "D", text: "Karena cincin diukur menggunakan jangka sorong yang memiliki ketelitian lebih tinggi dibandingkan mistar dan meteran gulung, maka satuan SI untuk dimensi pelat logam tersebut ditetapkan dalam milimeter (mm), bukan meter (m)." },
+          { key: "E", text: "Hasil perhitungan luas permukaan papan tulis kelas adalah 2,88 m²." }
+        ],
+        answerKey: ["B", "C", "E"]
+      },
+
+      // ==================== SOAL 6 (BENAR / SALAH) ====================
+      {
+        id: 6,
+        type: "true_false",
+        topic: "Hakikat Fisika, Besaran, dan Pengukurannya",
+        stem: `
+          <p>Dalam sebuah proyek, kelas X merancang prototipe lampu taman bertenaga surya. Selama proses pengujian, mereka mencatat lima besaran fisis utama sistem kelistrikan dan termal rangkaian ke dalam tabel pengamatan berikut:</p>
+          <div class="overflow-x-auto">
+            <table class="exam-table">
+              <thead>
+                <tr>
+                  <th>No</th>
+                  <th>Besaran / Parameter</th>
+                  <th>Simbol Besaran</th>
+                  <th>Hasil Pengukuran</th>
+                  <th>Satuan SI</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>1</td><td>Panjang kabel penghantar</td><td><em>l</em></td><td>1,5</td><td>Meter (m)</td></tr>
+                <tr><td>2</td><td>Massa panel surya mini</td><td><em>M</em></td><td>0,4</td><td>Kilogram (kg)</td></tr>
+                <tr><td>3</td><td>Lama waktu penyinaran lampu</td><td><em>T</em></td><td>600</td><td>Sekon (s)</td></tr>
+                <tr><td>4</td><td>Kuat arus pengisian baterai</td><td><em>I</em></td><td>0,8</td><td>Ampere (A)</td></tr>
+                <tr><td>5</td><td>Suhu permukaan panel surya</td><td><em>T</em></td><td>315</td><td>Kelvin (K)</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="font-semibold text-slate-900">Untuk memvalidasi kebenaran persamaan fisika yang digunakan pada laporan akhir melalui metode analisis dimensional, guru meminta siswa menguraikan lambang dimensi dari setiap besaran pokok pada tabel serta menganalisis hubungan satuan dan dimensinya ketika dikombinasikan menjadi besaran baru. Berdasarkan tabel pengamatan di atas, tentukan <strong>Benar</strong> atau <strong>Salah</strong> untuk setiap pernyataan berikut!</p>
+        `,
+        statements: [
+          {
+            key: "A",
+            text: "Lambang dimensi untuk parameter panjang kabel (l), massa panel (m), dan waktu penyinaran (t) secara berturut-turut dituliskan sebagai [L], [M], dan [T]."
+          },
+          {
+            key: "B",
+            text: "Jika panjang kabel penghantar (1,5 m) disambung dengan kabel tambahan sepanjang 0,5 m, maka hasil penjumlahan kedua besaran panjang tersebut memiliki dimensi [L]² karena melibatkan dua buah pengukuran besaran pokok panjang."
+          },
+          {
+            key: "C",
+            text: "Pada tabel pengamatan di atas, parameter nomor 5 menggunakan simbol besaran T (suhu), sehingga lambang dimensinya identik dengan parameter nomor 3 (waktu), yaitu [T]."
+          }
+        ],
+        answerKey: { A: "B", B: "S", C: "B" }
+      },
+
+      // ==================== SOAL 7 (BENAR / SALAH) ====================
+      {
+        id: 7,
+        type: "true_false",
+        topic: "Hakikat Fisika, Besaran, dan Pengukurannya",
+        stem: `
+          <p>Allah SWT berfirman dalam QS. Al-Qamar ayat 49: <em>"Sesungguhnya Kami menciptakan segala sesuatu menurut ukuran."</em> Ayat ini mengingatkan bahwa alam semesta diciptakan dengan keteraturan dan ketetapan ukuran yang presisi. Sebagai bentuk syukur dan meneladani sifat amanah (jujur dan teliti) dalam menuntut ilmu, siswa kelas X diminta mengamati beberapa alat ukur di laboratorium dan mencatat secara jujur besaran pokok yang diukur beserta satuan Sistem Internasional (SI) dan lambang dimensinya. Penulisan dimensi sangat penting dalam Fisika karena menunjukkan cara suatu besaran tersusun dari besaran-besaran pokoknya. Perhatikan tabel ringkasan hasil pengamatan yang disusun dengan teliti oleh salah satu kelompok berikut ini!</p>
+          <div class="overflow-x-auto">
+            <table class="exam-table">
+              <thead>
+                <tr>
+                  <th>No</th>
+                  <th>Besaran Pokok</th>
+                  <th>Satuan Sistem Internasional (SI)</th>
+                  <th>Lambang Dimensi</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>1</td><td>Panjang</td><td>Meter (m)</td><td>[L]</td></tr>
+                <tr><td>2</td><td>Massa</td><td>Kilogram (kg)</td><td>[M]</td></tr>
+                <tr><td>3</td><td>Waktu</td><td>Sekon (s)</td><td>[T]</td></tr>
+                <tr><td>4</td><td>Kuat Arus Listrik</td><td>Ampere (A)</td><td>[I]</td></tr>
+                <tr><td>5</td><td>Suhu</td><td>Kelvin (K)</td><td>[θ]</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="font-semibold text-slate-900">Berdasarkan narasi dan tabel pengamatan di atas, tentukan <strong>Benar</strong> atau <strong>Salah</strong> untuk setiap pernyataan berikut!</p>
+        `,
+        statements: [
+          {
+            key: "A",
+            text: "Lambang dimensi [L], [M], dan [T] secara berturut-turut digunakan untuk menyatakan besaran pokok panjang, massa, dan waktu."
+          },
+          {
+            key: "B",
+            text: "Besaran pokok suhu memiliki satuan Sistem Internasional kelvin (K) dengan lambang dimensi yang dituliskan sebagai [θ]."
+          },
+          {
+            key: "C",
+            text: "Penulisan lambang dimensi untuk besaran waktu dan suhu menggunakan simbol yang sama, yaitu [T], karena keduanya sama-sama diawali huruf T dalam bahasa Inggris (Time dan Temperature)."
+          }
+        ],
+        answerKey: { A: "B", B: "B", C: "S" }
+      },
+
+      // ==================== SOAL 8 (BENAR / SALAH) ====================
+      {
+        id: 8,
+        type: "true_false",
+        topic: "Hakikat Fisika, Besaran, dan Pengukurannya",
+        stem: `
+          <p>Sebagai wujud tadabbur (merenungi kebesaran ciptaan Allah) sekaligus rasa syukur atas akal yang dikaruniakan kepada manusia untuk mengembangkan ilmu pengetahuan, Ana dan Ani membaca artikel mengenai perkembangan teknologi mikroprosesor komputer dan eksplorasi tata surya. Dalam artikel tersebut disebutkan bahwa jarak rata-rata antara Bumi dan Matahari mencapai sekitar <strong>150.000.000.000 meter</strong>, sedangkan diameter satu buah transistor pada chip prosesor modern hanya berukuran <strong>0,000000005 meter</strong>. Untuk mempermudah penulisan bilangan yang sangat besar maupun sangat kecil sekaligus menunjukkan jumlah angka pentingnya secara jelas, ilmuwan Fisika menggunakan aturan baku notasi ilmiah.</p>
+          <p class="font-semibold text-slate-900">Berdasarkan narasi di atas, tentukan <strong>Benar</strong> atau <strong>Salah</strong> untuk setiap pernyataan berikut!</p>
+        `,
+        statements: [
+          {
+            key: "A",
+            text: "Jarak rata-rata antara Bumi dan Matahari jika dituliskan dalam bentuk notasi ilmiah baku adalah 1,5 × 10¹¹ meter."
+          },
+          {
+            key: "B",
+            text: "Pada bilangan desimal yang sangat kecil seperti diameter transistor (0,000000005 meter), pangkat bilangan sepuluh dalam notasi ilmiahnya selalu bernilai positif."
+          },
+          {
+            key: "C",
+            text: "Ukuran diameter satu buah transistor pada chip prosesor jika dituliskan dalam bentuk notasi ilmiah baku adalah 5 × 10⁻⁹ meter."
+          }
+        ],
+        answerKey: { A: "B", B: "S", C: "B" }
+      },
+
+      // ==================== SOAL 9 (BENAR / SALAH) ====================
+      {
+        id: 9,
+        type: "true_false",
+        topic: "Hakikat Fisika, Besaran, dan Pengukurannya",
+        stem: `
+          <p>Dalam Islam, mencari kebenaran ilmiah sejalan dengan perintah untuk melakukan <em>tabayyun</em>—yakni meneliti, memverifikasi, dan menguji suatu informasi secara cermat sebelum mengambil keputusan (QS. Al-Hujurat: 6)—serta menjunjung tinggi sifat amanah agar hasil penelitian jujur dan tidak direkayasa. Dalam metode ilmiah, merancang dan melakukan eksperimen harus mengikuti tahapan yang terstruktur agar data yang diperoleh valid dan dapat dipertanggungjawabkan, mulai dari membuktikan hipotesis penelitian dan seterusnya.</p>
+          <p class="font-semibold text-slate-900">Pilihlah jawaban <strong>Benar</strong> atau <strong>Salah</strong> untuk setiap pernyataan berikut berdasarkan narasi di atas!</p>
+        `,
+        statements: [
+          {
+            key: "A",
+            text: "Tahap menganalisis data dilakukan sebelum menentukan variabel penelitian dan setelah mengumpulkan data."
+          },
+          {
+            key: "B",
+            text: "Mengidentifikasi variabel bebas, terikat, dan kontrol dilakukan bersamaan saat peneliti menarik kesimpulan."
+          },
+          {
+            key: "C",
+            text: "Membuat rancangan percobaan dilakukan setelah hipotesis ditentukan dan sebelum eksperimen dijalankan."
+          }
+        ],
+        answerKey: { A: "S", B: "S", C: "B" }
+      },
+
+      // ==================== SOAL 10 (BENAR / SALAH) ====================
+      {
+        id: 10,
+        type: "true_false",
+        topic: "Hakikat Fisika, Besaran, dan Pengukurannya",
+        stem: `
+          <p>Sebagaimana dijelaskan dalam Al-Qur'an bahwa segala sesuatu di alam semesta telah diciptakan dengan ukuran dan ketetapan yang presisi (<em>qadar</em>). Ketepatan ukuran tersebut tercermin dalam ilmu Fisika melalui analisis dimensional yang memastikan konsistensi penyusunan setiap besaran turunan dari besaran-besaran pokoknya. Dalam kegiatan praktikum Fisika di madrasah, sekelompok siswa kelas X menguji efisiensi kerja panel surya dalam menghasilkan daya listrik (<em>P</em>), yang secara fisis didefinisikan sebagai besar usaha yang dilakukan setiap satuan waktu (<em>P</em> = <em>W</em>/<em>t</em>). Untuk menguji ketelitian analisis matematis mereka, guru memberikan formula dimensi daya dalam bentuk <strong>[M]<sup>a</sup>[L]<sup>b</sup>[T]<sup>c</sup></strong> dan meminta siswa mengevaluasi nilai dari persamaan <strong>5a + 2b − 6c</strong>.</p>
+          <p class="font-semibold text-slate-900">Berdasarkan narasi di atas, pilihlah jawaban <strong>Benar</strong> atau <strong>Salah</strong> untuk setiap pernyataan berikut!</p>
+        `,
+        statements: [
+          {
+            key: "A",
+            text: "Formula dimensi besaran daya memiliki nilai pangkat dimensi pokok secara berturut-turut a = −3, b = 1, dan c = 2."
+          },
+          {
+            key: "B",
+            text: "Formula dimensi besaran daya memiliki nilai pangkat dimensi pokok secara berturut-turut a = 1, b = 2, dan c = −3."
+          },
+          {
+            key: "C",
+            text: "Apabila nilai pangkat dimensi daya disubstitusikan ke dalam persamaan 5a + 2b − 6c, maka hasil perhitungan akhirnya adalah 27."
+          }
+        ],
+        answerKey: { A: "S", B: "B", C: "B" }
+      },
+
+      // ==================== SOAL 11 ====================
+      {
+        id: 11,
+        type: "multiple_choice",
+        topic: "Hakikat Fisika, Besaran, dan Pengukurannya",
+        stem: `
+          <p>Alam semesta menyimpan begitu banyak rahasia dan keteraturan melalui berbagai gejala serta fenomena yang terjadi di sekitar kita setiap harinya—mulai dari peredaran benda-benda langit pada orbitnya, jatuhnya buah ke permukaan bumi, hingga perambatan cahaya matahari yang menghangatkan kehidupan. Keindahan, keseimbangan, dan presisi keteraturan <em>sunnatullah</em> ini merupakan salah satu bukti nyata dari kebesaran serta kekuasaan Allah SWT yang mendorong manusia untuk senantiasa bertafakur dan menuntut ilmu.</p>
+          <p class="font-semibold text-slate-900">Untuk menyingkap rahasia keteraturan tersebut, manusia mempelajari bagaimana benda-benda bergerak, berinteraksi, serta bagaimana energi dapat berpindah dan berubah bentuk dari satu sistem ke sistem lainnya. Cabang ilmu pengetahuan alam yang secara khusus mempelajari tentang gejala dan fenomena alam serta sifat-sifat benda di sekitar kita, termasuk materi, gerak, perpindahan, dan energi beserta interaksinya, merupakan definisi dari cabang ilmu ....</p>
+        `,
+        options: [
+          { key: "A", text: "Kimia" },
+          { key: "B", text: "Fisika" },
+          { key: "C", text: "Biologi" },
+          { key: "D", text: "Antropologi" },
+          { key: "E", text: "Sosial Budaya" }
+        ],
+        answerKey: "B"
+      },
+
+      // ==================== SOAL 12 ====================
+      {
+        id: 12,
+        type: "multiple_choice",
+        topic: "Hakikat Fisika, Besaran, dan Pengukurannya",
+        stem: `
+          <p>Ilmu fisika merupakan proses penemuan ilmiah melalui kegiatan eksperimen di laboratorium yang menuntut ketelitian, kehati-hatian, serta sikap tanggung jawab. Dalam perspektif Islam, setiap penuntut ilmu diajarkan untuk senantiasa menjaga amanah, berikhtiar mencegah bahaya (<em>la dharara wa la dhirar</em>—tidak membahayakan diri sendiri maupun orang lain), serta merawat kelestarian lingkungan sebagai bentuk rasa syukur kepada Allah SWT. Saat melakukan praktikum di laboratorium, seorang siswa melihat sebuah botol larutan yang pada labelnya tertera simbol peringatan seperti pada gambar di bawah ini.</p>
+          ${SVG_ASSETS.flammableSign}
+          <p class="font-semibold text-slate-900">Sebagai wujud penerapan prosedur keselamatan kerja dan sikap kehati-hatian dalam eksperimen fisika, tindakan pencegahan yang sebaiknya diambil siswa ketika menggunakan zat tersebut adalah ....</p>
+        `,
+        options: [
+          { key: "A", text: "Mencampurkan zat tersebut dengan bahan kimia lain secara acak untuk menguji tingkat ketahanannya terhadap api" },
+          { key: "B", text: "Membiarkan tutup botol tetap terbuka selama praktikum berlangsung agar uap zat di dalamnya cepat menguap ke udara" },
+          { key: "C", text: "Menyimpan botol zat tersebut di atas meja praktikum yang terkena sinar matahari langsung agar suhunya tetap hangat" },
+          { key: "D", text: "Menjauhkan botol zat tersebut dari sumber api, nyala pembakar spiritus, percikan listrik, maupun paparan panas berlebih" },
+          { key: "E", text: "Memanaskan zat tersebut secara langsung di atas nyala api terbuka untuk mempercepat proses pengamatan eksperimen" }
+        ],
+        answerKey: "D"
+      },
+
+      // ==================== SOAL 13 ====================
+      {
+        id: 13,
+        type: "multiple_choice",
+        topic: "Hakikat Fisika, Besaran, dan Pengukurannya",
+        stem: `
+          <p>Dalam ajaran Islam, manusia diperintahkan untuk senantiasa menggunakan akal pikiran guna meneliti tanda-tanda kebesaran Allah SWT di alam semesta (ayat-ayat kauniyah), sebagaimana seruan dalam Al-Qur'an untuk memperhatikan bagaimana langit ditinggikan dan bumi dihamparkan. Selain bertafakur, seorang ilmuwan muslim juga wajib menjunjung tinggi nilai amanah dan kejujuran (<em>shiddiq</em>) dengan tidak tergesa-gesa menyimpulkan suatu perkara sebelum membuktikannya secara sistematis dan objektif.</p>
+          <p>Suatu hari, Fatimah mengamati bahwa air hujan yang ditampung di dalam ember logam terasa lebih cepat dingin pada malam hari dibandingkan air yang ditampung di dalam ember plastik dengan volume yang sama. Untuk membuktikan penyebab fenomena tersebut secara ilmiah, Fatimah melakukan serangkaian tahapan penyelidikan berikut:</p>
+          <ol class="list-decimal list-inside bg-slate-50 border border-slate-200 rounded-xl p-3.5 my-3 space-y-1.5 text-sm">
+            <li>Menyusun hipotesis bahwa perbedaan jenis bahan wadah memengaruhi laju penurunan suhu air.</li>
+            <li>Mengukur dan mencatat perubahan suhu air di dalam ember logam serta ember plastik setiap 10 menit menggunakan termometer.</li>
+            <li>Merumuskan pertanyaan penelitian: "Apakah jenis bahan wadah berpengaruh terhadap laju penurunan suhu air?"</li>
+            <li>Mengolah data hasil pengukuran dalam bentuk grafik dan menarik kesimpulan bahwa bahan logam melepas kalor lebih cepat daripada plastik.</li>
+            <li>Mengamati fenomena perbedaan suhu air pada kedua jenis ember setelah hujan reda.</li>
+          </ol>
+          <p class="font-semibold text-slate-900">Urutan langkah-langkah metode ilmiah yang tepat dilakukan oleh Fatimah dalam menyelidiki fenomena tersebut adalah ....</p>
+        `,
+        options: [
+          { key: "A", text: "(1) – (3) – (5) – (2) – (4)" },
+          { key: "B", text: "(3) – (5) – (1) – (2) – (4)" },
+          { key: "C", text: "(5) – (1) – (3) – (2) – (4)" },
+          { key: "D", text: "(5) – (3) – (1) – (2) – (4)" },
+          { key: "E", text: "(5) – (3) – (2) – (1) – (4)" }
+        ],
+        answerKey: "D"
+      },
+
+      // ==================== SOAL 14 ====================
+      {
+        id: 14,
+        type: "multiple_choice",
+        topic: "Hakikat Fisika, Besaran, dan Pengukurannya",
+        stem: `
+          <p>Islam mengajarkan umatnya untuk senantiasa bersikap <em>itqan</em> (profesional, cermat, dan teliti) serta menjunjung tinggi kejujuran dalam mengukur sesuatu agar tidak merugikan pihak lain, sebagaimana pesan Al-Qur'an untuk menegakkan timbangan dan ukuran dengan adil (QS. Ar-Rahman: 9). Sebagai wujud penerapan nilai ketelitian tersebut dalam praktikum Fisika di laboratorium, Ahmad dan kelompoknya menggunakan jangka sorong untuk mengukur dimensi sebuah cincin logam meliputi diameter luar, diameter dalam, dan kedalaman rongga cincin, karena mistar biasa tidak mampu memberikan ketelitian hingga sepersepuluh milimeter. Sebelum membaca hasil pengukuran, mereka mempelajari kembali konsep dasar, nilai skala terkecil (NST), serta bagian-bagian utama dari alat ukur tersebut.</p>
+          <p class="font-semibold text-slate-900">Berdasarkan narasi di atas, pernyataan yang benar mengenai jangka sorong adalah ....</p>
+        `,
+        options: [
+          { key: "A", text: "Jangka sorong adalah alat ukur panjang dengan ketelitian 0,01 mm yang menggunakan rahang atas untuk mengukur diameter luar benda" },
+          { key: "B", text: "Jangka sorong adalah alat ukur panjang dengan nilai skala terkecil 0,1 mm yang menggunakan tangkai ukur di ujung batang untuk mengukur kedalaman lubang" },
+          { key: "C", text: "Jangka sorong adalah alat ukur besaran massa dengan tingkat ketelitian 0,1 cm yang memiliki skala nonius tetap pada batang utamanya" },
+          { key: "D", text: "Jangka sorong adalah alat ukur panjang dengan ketelitian 1 mm yang menggunakan rahang bawah untuk mengukur diameter dalam cincin" },
+          { key: "E", text: "Jangka sorong adalah alat ukur ketebalan benda sangat tipis dengan nilai skala terkecil 0,001 cm yang hanya memiliki satu pasang rahang pengukur" }
+        ],
+        answerKey: "B"
+      },
+
+      // ==================== SOAL 15 ====================
+      {
+        id: 15,
+        type: "multiple_choice",
+        topic: "Hakikat Fisika, Besaran, dan Pengukurannya",
+        stem: `
+          <p>Saat melakukan praktik pengukuran di laboratorium, Dimas mendapati bahwa hasil pembacaan diameter sebuah kelereng menggunakan penggaris berbeda cukup jauh dengan hasil pengukuran yang dilakukan temannya menggunakan jangka sorong. Dimas pun mempertanyakan alat ukur manakah yang memberikan tingkat ketelitian lebih baik untuk benda berbentuk bola kecil. Ia menduga bahwa jangka sorong memiliki skala terkecil yang lebih halus sehingga ketidakpastian pengukurannya lebih kecil dibandingkan penggaris. Untuk membuktikannya, Dimas melakukan pengukuran berulang sebanyak lima kali pada kelereng yang sama menggunakan kedua alat tersebut dan mencatat seluruh hasilnya dalam tabel. Setelah menghitung nilai rata-rata serta ketidakpastian relatif dari kedua kelompok data, Dimas menyimpulkan bahwa jangka sorong jauh lebih presisi dan akurat untuk mengukur diameter kelereng dibandingkan penggaris.</p>
+          <p class="font-semibold text-slate-900">Berdasarkan narasi praktik pengukuran tersebut, urutan prosedur metode ilmiah yang diterapkan Dimas secara sistematis adalah ....</p>
+        `,
+        options: [
+          { key: "A", text: "Melakukan observasi – menyusun hipotesis – merumuskan masalah – melakukan eksperimen – menarik kesimpulan" },
+          { key: "B", text: "Merumuskan masalah – melakukan observasi – menyusun hipotesis – menganalisis data – menarik kesimpulan" },
+          { key: "C", text: "Melakukan observasi – merumuskan masalah – menyusun hipotesis – melakukan eksperimen – menganalisis data – menarik kesimpulan" },
+          { key: "D", text: "Menyusun hipotesis – melakukan observasi – merumuskan masalah – melakukan eksperimen – menarik kesimpulan" },
+          { key: "E", text: "Melakukan observasi – merumuskan masalah – melakukan eksperimen – menyusun hipotesis – menganalisis data – menarik kesimpulan" }
+        ],
+        answerKey: "C"
+      },
+
+      // ==================== SOAL 16 ====================
+      {
+        id: 16,
+        type: "multiple_choice",
+        topic: "Hakikat Fisika, Besaran, dan Pengukurannya",
+        stem: `
+          <p>Dalam kegiatan praktikum fisika dasar, lima kelompok peserta didik melakukan pengukuran beberapa besaran fisis yang berbeda menggunakan alat ukur dengan tingkat ketelitian masing-masing. Saat menyusun laporan praktikum, guru mengingatkan bahwa setiap digit yang tercatat pada hasil pengukuran mencerminkan tingkat ketelitian alat ukur sehingga harus mengikuti aturan penulisan angka penting—terutama dalam membedakan mana angka nol yang termasuk angka penting dan mana yang hanya berfungsi sebagai penunjuk letak koma desimal.</p>
+          <p class="font-semibold text-slate-900">Dari daftar data hasil pengukuran kelima kelompok tersebut, hasil pengukuran berikut yang <strong>tidak</strong> memiliki 3 angka penting adalah ....</p>
+        `,
+        options: [
+          { key: "A", text: "0,00580 km" },
+          { key: "B", text: "0,0903 A" },
+          { key: "C", text: "3,50 L" },
+          { key: "D", text: "87<u>0</u> g" },
+          { key: "E", text: "34.540,0 cm" }
+        ],
+        answerKey: "E"
+      },
+
+      // ==================== SOAL 17 ====================
+      {
+        id: 17,
+        type: "multiple_choice",
+        topic: "Hakikat Fisika, Besaran, dan Pengukurannya",
+        stem: `
+          <p>Dalam ajaran Islam, manusia diperintahkan untuk senantiasa menjaga keteraturan, amanah, dan keadilan dalam setiap aktivitas pengukuran maupun takaran, sebagaimana tercermin dalam ketelitian ibadah dan muamalah sehari-hari—mulai dari memastikan batas jarak shaf salat tetap lurus, menjaga ketepatan waktu salat lima waktu, hingga menakar zakat fitrah berdasarkan timbangan yang akurat. Di balik keteraturan alam semesta dan aktivitas ibadah tersebut, ilmu fisika mengklasifikasikan besaran-besaran dasar yang menjadi fondasi bagi seluruh pengukuran di alam ini ke dalam tujuh besaran pokok Sistem Internasional (SI).</p>
+          <p class="font-semibold text-slate-900">Di antara kelompok besaran berikut, yang seluruhnya termasuk besaran pokok dalam Sistem Internasional (SI) adalah ....</p>
+        `,
+        options: [
+          { key: "A", text: "Panjang, luas, waktu, jumlah zat" },
+          { key: "B", text: "Kuat arus listrik, intensitas cahaya, suhu, waktu" },
+          { key: "C", text: "Volume, suhu, massa, kuat arus listrik" },
+          { key: "D", text: "Kuat arus listrik, panjang, massa, tekanan" },
+          { key: "E", text: "Intensitas cahaya, kecepatan, percepatan, waktu" }
+        ],
+        answerKey: "B"
+      },
+
+      // ==================== SOAL 18 ====================
+      {
+        id: 18,
+        type: "multiple_choice",
+        topic: "Hakikat Fisika, Besaran, dan Pengukurannya",
+        stem: `
+          <p>Dalam ajaran Islam, Al-Qur'an mengingatkan bahwa Allah SWT menciptakan segala sesuatu di alam semesta dengan ukuran, ketetapan, dan keseimbangan yang sempurna (<em>Qadar</em>), sebagaimana termaktub dalam QS. Al-Qamar ayat 49: <em>"Sesungguhnya Kami menciptakan segala sesuatu menurut ukuran."</em> Melalui tadabur alam dan ilmu fisika, manusia mempelajari hukum-hukum keseimbangan tersebut dengan merumuskan berbagai besaran turunan dari besaran-besaran pokoknya menggunakan analisis dimensi.</p>
+          <p class="font-semibold text-slate-900">Apabila dalam suatu kajian fisis mengenai keseimbangan gaya pada luas bidang tertentu diperoleh persamaan dimensi <strong>[M][L]<sup>−1</sup>[T]<sup>−2</sup></strong> maka besaran yang dimaksud adalah ….</p>
+        `,
+        options: [
+          { key: "A", text: "Tekanan" },
+          { key: "B", text: "Gaya" },
+          { key: "C", text: "Energi" },
+          { key: "D", text: "Momentum" },
+          { key: "E", text: "Percepatan" }
+        ],
+        answerKey: "A"
+      },
+
+      // ==================== SOAL 19 ====================
+      {
+        id: 19,
+        type: "multiple_choice",
+        topic: "Hakikat Fisika, Besaran, dan Pengukurannya",
+        stem: `
+          <p>Perhatikan gambar alat ukur di bawah ini.</p>
+          <p>Pada hari Minggu pagi, Rara membantu kakeknya berjualan bawang merah di pasar tradisional. Sebelum membuka lapak, kakek selalu berpesan kepada Rara agar menjaga kejujuran dan menyempurnakan takaran maupun timbangan saat melayani pembeli, karena dalam Islam mengurangi timbangan merupakan perbuatan zalim yang dilarang keras oleh Allah SWT, sebagaimana firman-Nya dalam QS. Al-Muthaffifin ayat 1–3 tentang ancaman bagi orang-orang yang curang dalam menakar dan menimbang. Saat seorang pembeli meminta bawang merah sebanyak <strong>2,5 kg</strong>, Rara harus memilih alat ukur massa yang tepat agar hasil penimbangannya akurat, amanah, dan sesuai dengan kapasitas barang yang ditimbang.</p>
+          <p class="font-semibold text-slate-900">Berdasarkan narasi tersebut, alat ukur yang paling tepat digunakan Rara untuk menimbang bawang merah tersebut adalah ....</p>
+        `,
+        options: [
+          { key: "A", text: SVG_ASSETS.soal19Options.A },
+          { key: "B", text: SVG_ASSETS.soal19Options.B },
+          { key: "C", text: SVG_ASSETS.soal19Options.C },
+          { key: "D", text: SVG_ASSETS.soal19Options.D },
+          { key: "E", text: SVG_ASSETS.soal19Options.E }
+        ],
+        answerKey: "D"
+      },
+
+      // ==================== SOAL 20 ====================
+      {
+        id: 20,
+        type: "multiple_choice",
+        topic: "Hakikat Fisika, Besaran, dan Pengukurannya",
+        stem: `
+          <p>Dalam kegiatan praktikum IPA, Naira dan teman-teman kelasnya melakukan pengukuran panjang menggunakan mistar. Guru IPA memberikan kebebasan kepada setiap siswa untuk memilih benda di sekitar kelas yang akan diukur, sembari mengingatkan pesan moral dalam ajaran Islam tentang pentingnya ketelitian, kejujuran, dan sikap <em>itqan</em> (bersungguh-sungguh serta profesional dalam mengerjakan sesuatu), sebagaimana sabda Rasulullah SAW bahwa Allah mencintai seseorang yang apabila bekerja, ia menyempurnakannya. Naira sangat berhati-hati saat mengukur sampul mushaf Al-Qur'an miliknya agar hasil pengukuran yang dicatat benar-benar akurat, amanah, dan terhindar dari kesalahan pembacaan skala (kesalahan paralaks).</p>
+          <p class="font-semibold text-slate-900">Berdasarkan narasi tersebut, teknik pengukuran menggunakan mistar yang paling tepat diterapkan oleh Naira adalah ....</p>
+        `,
+        options: [
+          { key: "A", text: "Meletakkan ujung benda sejajar dengan tepi paling ujung kayu/plastik mistar dan membaca skala dari arah samping kanan agar terlihat jelas" },
+          { key: "B", text: "Mengimpitkan ujung benda pada skala 1 cm dan mengarahkan pandangan mata menyerong dari arah atas ke bawah saat membaca skala" },
+          { key: "C", text: "Mengimpitkan salah satu ujung benda tepat pada skala nol mistar serta mengarahkan pandangan mata tegak lurus terhadap skala yang dibaca" },
+          { key: "D", text: "Memegang mistar dalam posisi miring mengikuti lekuk benda dan membaca skala dari sudut kemiringan 45° agar bayangan garis tidak bertumpuk" },
+          { key: "E", text: "Menempatkan posisi mata agak ke kiri dari garis skala yang ditunjuk ujung benda untuk mengimbangi ketebalan mistar" }
+        ],
+        answerKey: "C"
+      },
+
+      // ==================== SOAL 21 ====================
+      {
+        id: 21,
+        type: "multiple_choice",
+        topic: "Hakikat Fisika, Besaran, dan Pengukurannya",
+        stem: `
+          <p>Dalam percobaan pengamatan pengaruh intensitas cahaya matahari terhadap pertumbuhan biji kacang hijau, Zafana merawat dan mengamati perkembangan kecambahnya dengan penuh kesabaran serta rasa syukur. Ia menyadari bahwa proses tumbuhnya biji kecil menjadi tanaman merupakan bukti kebesaran Allah SWT dalam menghidupkan tumbuhan di bumi, sebagaimana dijelaskan dalam QS. Al-An'am ayat 95 bahwa Allah menumbuhkan butir tumbuh-tumbuhan dan biji buah-buahan dengan aturan serta ukuran yang teratur. Untuk membuktikan keteraturan pertumbuhan tersebut secara ilmiah dan amanah, Zafana melakukan pengukuran pertambahan tinggi batang kecambah setiap hari menggunakan penggaris dan mencatatnya dalam tabel laporan menggunakan simbol besaran fisis yang baku.</p>
+          <p class="font-semibold text-slate-900">Berdasarkan kaidah penulisan besaran dalam fisika, lambang untuk besaran panjang adalah ....</p>
+        `,
+        options: [
+          { key: "A", text: "<em>l</em>" },
+          { key: "B", text: "<em>A</em>" },
+          { key: "C", text: "<em>cd</em>" },
+          { key: "D", text: "<em>K</em>" },
+          { key: "E", text: "<em>Mol</em>" }
+        ],
+        answerKey: "A"
+      },
+
+      // ==================== SOAL 22 ====================
+      {
+        id: 22,
+        type: "multiple_choice",
+        topic: "Hakikat Fisika, Besaran, dan Pengukurannya",
+        stem: `
+          <p>Dalam kegiatan praktikum lapangan, kelompok Bima mendapat tugas mengukur lebar saluran irigasi di sekitar sekolah menggunakan meteran gulung. Setelah melakukan pengukuran secara saksama, kelompok Bima mencatat bahwa lebar saluran irigasi tersebut adalah <strong>350 cm</strong>. Namun, dalam format laporan resmi fisika yang diberikan oleh guru, seluruh data hasil pengukuran besaran panjang wajib dituliskan ke dalam satuan baku Sistem Internasional (SI), yaitu meter (m).</p>
+          <p class="font-semibold text-slate-900">Berdasarkan hasil pengukuran kelompok Bima tersebut, nilai lebar saluran irigasi yang harus dituliskan pada laporan resmi adalah ....</p>
+        `,
+        options: [
+          { key: "A", text: "0,035 m" },
+          { key: "B", text: "0,35 m" },
+          { key: "C", text: "3,5 m" },
+          { key: "D", text: "35 m" },
+          { key: "E", text: "3.500 m" }
+        ],
+        answerKey: "C"
+      },
+
+      // ==================== SOAL 23 ====================
+      {
+        id: 23,
+        type: "multiple_choice",
+        topic: "Hakikat Fisika, Besaran, dan Pengukurannya",
+        stem: `
+          <p>Dalam kegiatan praktikum fisika dasar untuk menyelidiki hubungan antara panjang pegas dan beban yang digantungkan, kelompok Dina mengukur pertambahan panjang seutas pegas setelah diberi beban logam. Dari hasil pengamatan, panjang pegas bertambah sejauh 4 cm saat digantungi sebuah anak timbangan logam yang tertera memiliki massa sebesar <strong>250 gram</strong>. Sebelum memasukkan data tersebut ke dalam rumus gaya berat (<em>w</em> = <em>m</em> · <em>g</em>) pada laporan praktikum, guru mengingatkan bahwa seluruh besaran harus dikonversi terlebih dahulu ke dalam satuan baku Sistem Internasional (SI).</p>
+          <p class="font-semibold text-slate-900">Berdasarkan narasi tersebut, nilai massa beban logam yang harus dituliskan kelompok Dina dalam satuan Sistem Internasional (kilogram) adalah ....</p>
+        `,
+        options: [
+          { key: "A", text: "0,025 kg" },
+          { key: "B", text: "0,25 kg" },
+          { key: "C", text: "2,5 kg" },
+          { key: "D", text: "25 kg" },
+          { key: "E", text: "2.500 kg" }
+        ],
+        answerKey: "B"
+      },
+
+      // ==================== SOAL 24 ====================
+      {
+        id: 24,
+        type: "multiple_choice",
+        topic: "Hakikat Fisika, Besaran, dan Pengukurannya",
+        stem: `
+          <p>Dalam ajaran Islam, rukun iman dan rukun Islam menjadi fondasi utama yang kokoh bagi seorang muslim dalam menjalankan seluruh syariat ibadahnya, sehingga tidak dapat diubah-ubah maupun dikurangi. Prinsip serupa juga terdapat dalam keteraturan hukum alam ciptaan Allah SWT yang dipelajari dalam ilmu fisika. Untuk mengukur berbagai fenomena alam secara teratur dan seragam di seluruh dunia, para ilmuwan menetapkan kelompok besaran tertentu sebagai fondasi dasar.</p>
+          <p class="font-semibold text-slate-900">Besaran yang menjadi dasar untuk menetapkan besaran-besaran lain serta satuannya telah ditetapkan terlebih dahulu dan tidak dapat diubah lagi disebut ....</p>
+        `,
+        options: [
+          { key: "A", text: "Besaran Pokok" },
+          { key: "B", text: "Besaran Turunan" },
+          { key: "C", text: "Besaran Skalar" },
+          { key: "D", text: "Besaran Vektor" },
+          { key: "E", text: "Besaran Waktu" }
+        ],
+        answerKey: "A"
+      },
+
+      // ==================== SOAL 25 ====================
+      {
+        id: 25,
+        type: "multiple_choice",
+        topic: "Hakikat Fisika, Besaran, dan Pengukurannya",
+        stem: `
+          <p>Pada sebuah laboratorium terdapat beberapa praktikan hendak melakukan eksperimen. Beragam eksperimen terjadi di dalam laboratorium. Seluruh praktikan sibuk dengan eksperimennya masing-masing. Beberapa praktikan pemula masih bingung membedakan besaran pokok dengan satuannya.</p>
+          <p class="font-semibold text-slate-900">Maka pasangan besaran pokok, lambang besaran, satuan, dan lambang satuan yang tepat adalah ….</p>
+        `,
+        options: [
+          { key: "A", text: "Kuat Arus Listrik — Lambang: <em>I</em> — Satuan: Ampere (A)" },
+          { key: "B", text: "Suhu — Lambang: <em>T</em> — Satuan: Meter (m)" },
+          { key: "C", text: "Intensitas Cahaya — Lambang: <em>Iv</em> — Satuan: Sekon (s)" },
+          { key: "D", text: "Massa — Lambang: <em>m</em> — Satuan: Mole (Mol)" },
+          { key: "E", text: "Waktu — Lambang: <em>n</em> — Satuan: Candela (Cd)" }
+        ],
+        answerKey: "A"
+      }
+    ];
+
+    /**
+     * STATE APLIKASI GLOBAL
+     */
+    const appState = {
+      students: [],
+      subjects: ["Fisika"],
+      remoteSubmittedRecords: [], // Menyimpan { nama, mapel } dari Spreadsheet jika tersedia
+      selectedStudent: "",
+      selectedSubject: "Fisika",
+      examActive: false,
+      questionOrder: [], // Array ID soal yang sudah diacak per siswa
+      currentIndex: 0,
+      answers: {},       // { [questionId]: value }
+      doubtful: {},      // { [questionId]: boolean }
+      remainingSeconds: EXAM_CONFIG.durationSeconds,
+      startTimeISO: null,
+      tabSwitchCount: 0,
+      lastTabWarningTime: 0,
+      timerInterval: null,
+      isSubmitting: false
+    };
+
+    /**
+     * UTILITAS UI: LOADING & CUSTOM MODAL (TANPA ALERT / CONFIRM BAWAAN BROWSER)
+     */
+    function showLoader(title = "Memuat Data...", subtitle = "Mohon tunggu sebentar") {
+      document.getElementById("loader-title").textContent = title;
+      document.getElementById("loader-subtitle").textContent = subtitle;
+      const el = document.getElementById("global-loader");
+      el.classList.remove("hidden");
+      el.classList.add("flex");
+    }
+
+    function hideLoader() {
+      const el = document.getElementById("global-loader");
+      el.classList.add("hidden");
+      el.classList.remove("flex");
+    }
+
+    function showCustomModal({ type = "info", title, bodyHtml, buttons = [] }) {
+      const modal = document.getElementById("custom-modal");
+      const headerBar = document.getElementById("modal-header-bar");
+      const iconBox = document.getElementById("modal-icon-box");
+      const titleEl = document.getElementById("modal-title");
+      const bodyEl = document.getElementById("modal-body");
+      const actionsEl = document.getElementById("modal-actions");
+
+      const styles = {
+        info: {
+          bar: "bg-brand-600",
+          iconBg: "bg-brand-50 text-brand-600",
+          svg: `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`
+        },
+        warning: {
+          bar: "bg-amber-500",
+          iconBg: "bg-amber-50 text-amber-600",
+          svg: `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>`
+        },
+        danger: {
+          bar: "bg-rose-600",
+          iconBg: "bg-rose-50 text-rose-600",
+          svg: `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`
+        },
+        confirm: {
+          bar: "bg-emerald-600",
+          iconBg: "bg-emerald-50 text-emerald-600",
+          svg: `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`
+        }
+      };
+
+      const chosen = styles[type] || styles.info;
+      headerBar.className = `h-2 ${chosen.bar}`;
+      iconBox.className = `w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${chosen.iconBg}`;
+      iconBox.innerHTML = chosen.svg;
+      titleEl.textContent = title;
+      bodyEl.innerHTML = bodyHtml;
+
+      actionsEl.innerHTML = "";
+      buttons.forEach(btn => {
+        const buttonEl = document.createElement("button");
+        buttonEl.type = "button";
+        buttonEl.textContent = btn.label;
+        buttonEl.className = btn.primary
+          ? "px-5 py-2.5 rounded-xl bg-brand-700 hover:bg-brand-800 text-white font-bold text-sm transition cursor-pointer"
+          : "px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm transition cursor-pointer";
+        if (btn.danger) {
+          buttonEl.className = "px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-sm transition cursor-pointer";
+        }
+        buttonEl.onclick = () => {
+          closeCustomModal();
+          if (typeof btn.onClick === "function") btn.onClick();
+        };
+        actionsEl.appendChild(buttonEl);
+      });
+
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+    }
+
+    function closeCustomModal() {
+      const modal = document.getElementById("custom-modal");
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+    }
+
+    /**
+     * PENGAMBILAN DATA SISWA & MATA PELAJARAN DARI GOOGLE APPS SCRIPT (GET)
+     */
+    async function fetchInitialDataFromGAS() {
+      const banner = document.getElementById("connection-banner");
+      
+      // Fallback daftar siswa untuk mode preview/lokal apabila GAS_URL belum diganti
+      const fallbackStudents = [
+        "Ahmad Fauzan Al-Farisi",
+        "Aisyah Nurul Hidayah",
+        "Anisa Rahmawati",
+        "Bima Sakti Putra",
+        "Dina Amelia Putri",
+        "Dimas Aditya Pratama",
+        "Fatimah Az-Zahra",
+        "Muhammad Fatih Al-Ghazali",
+        "Naira Khairunnisa",
+        "Nismawati Suleman",
+        "Rara Salsabila",
+        "Zafana Putri Ramadhani"
+      ];
+
+      if (!GAS_URL || GAS_URL === "MASUKKAN_URL_WEB_APP_GAS_DI_SINI" || !GAS_URL.startsWith("http")) {
+        appState.students = fallbackStudents;
+        appState.subjects = ["Fisika"];
+        renderStudentDropdown(appState.students);
+        renderSubjectOptions(appState.subjects);
+
+        banner.className = "rounded-xl p-3 text-xs flex items-start gap-2.5 border bg-amber-50 border-amber-200 text-amber-800";
+        banner.innerHTML = `
+          <svg class="w-4 h-4 shrink-0 mt-0.5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <div>
+            <strong>Mode Simulasi Lokal:</strong> Konstanta <code>GAS_URL</code> belum diatur. Menggunakan daftar siswa contoh untuk uji coba.
+          </div>
+        `;
+        banner.classList.remove("hidden");
+        return;
+      }
+
+      showLoader("Mengambil Data Peserta...", "Menghubungkan ke database Google Spreadsheet sekolah");
+      try {
+        const response = await fetch(GAS_URL, { method: "GET" });
+        if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
+        const raw = await response.json();
+        const payload = raw.data ? raw.data : raw;
+
+        // Ekstrak daftar nama siswa secara fleksibel dari format JSON GAS
+        let extractedStudents = [];
+        if (Array.isArray(payload.daftarSiswa)) {
+          extractedStudents = payload.daftarSiswa.map(s => typeof s === "string" ? s : (s.nama || s.name || s.Nama || "")).filter(Boolean);
+        } else if (Array.isArray(payload.students)) {
+          extractedStudents = payload.students.map(s => typeof s === "string" ? s : (s.nama || s.name || s.Nama || "")).filter(Boolean);
+        } else if (Array.isArray(payload.siswa)) {
+          extractedStudents = payload.siswa.map(s => typeof s === "string" ? s : (s.nama || s.name || s.Nama || "")).filter(Boolean);
+        } else if (Array.isArray(payload)) {
+          extractedStudents = payload.map(s => typeof s === "string" ? s : (s.nama || s.name || s.Nama || "")).filter(Boolean);
+        }
+
+        // Ekstrak daftar mata pelajaran
+        let extractedSubjects = [];
+        if (Array.isArray(payload.daftarMapel)) {
+          extractedSubjects = payload.daftarMapel.map(m => typeof m === "string" ? m : (m.mapel || m.subject || m.MataPelajaran || "")).filter(Boolean);
+        } else if (Array.isArray(payload.subjects)) {
+          extractedSubjects = payload.subjects.map(m => typeof m === "string" ? m : (m.mapel || m.subject || m.MataPelajaran || "")).filter(Boolean);
+        } else if (Array.isArray(payload.mapel)) {
+          extractedSubjects = payload.mapel.map(m => typeof m === "string" ? m : (m.mapel || m.subject || m.MataPelajaran || "")).filter(Boolean);
+        }
+
+        // Ekstrak data siswa yang sudah mengumpulkan dari server
+        if (Array.isArray(payload.sudahUjian)) {
+          appState.remoteSubmittedRecords = payload.sudahUjian;
+        } else if (Array.isArray(payload.submitted)) {
+          appState.remoteSubmittedRecords = payload.submitted;
+        }
+
+        appState.students = extractedStudents.length > 0 ? extractedStudents : fallbackStudents;
+        appState.subjects = extractedSubjects.length > 0 ? extractedSubjects : ["Fisika"];
+
+        renderStudentDropdown(appState.students);
+        renderSubjectOptions(appState.subjects);
+
+        banner.className = "rounded-xl p-3 text-xs flex items-center gap-2 border bg-emerald-50 border-emerald-200 text-emerald-800";
+        banner.innerHTML = `
+          <svg class="w-4 h-4 shrink-0 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+          </svg>
+          <span>Terhubung ke server sekolah (${appState.students.length} peserta terdaftar).</span>
+        `;
+        banner.classList.remove("hidden");
+      } catch (err) {
+        console.error("Gagal memuat dari GAS:", err);
+        appState.students = fallbackStudents;
+        appState.subjects = ["Fisika"];
+        renderStudentDropdown(appState.students);
+        renderSubjectOptions(appState.subjects);
+
+        banner.className = "rounded-xl p-3 text-xs flex items-start gap-2.5 border bg-rose-50 border-rose-200 text-rose-800";
+        banner.innerHTML = `
+          <svg class="w-4 h-4 shrink-0 mt-0.5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <div>
+            <strong>Gagal memuat daftar siswa dari server.</strong> Periksa koneksi internet atau URL Web App GAS. Daftar cadangan ditampilkan sementara.
+          </div>
+        `;
+        banner.classList.remove("hidden");
+      } finally {
+        hideLoader();
+      }
+    }
+
+    /**
+     * RENDER & INTERAKSI DROPDOWN PENCARIAN NAMA SISWA
+     */
+    function renderStudentDropdown(list) {
+      const container = document.getElementById("student-dropdown-list");
+      container.innerHTML = "";
+
+      if (list.length === 0) {
+        container.innerHTML = `<div class="px-4 py-3 text-xs text-slate-500 text-center">Nama siswa tidak ditemukan.</div>`;
+        return;
+      }
+
+      list.forEach(name => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "w-full text-left px-4 py-2.5 text-sm text-slate-700 hover:bg-brand-50 hover:text-brand-800 font-medium transition flex items-center justify-between cursor-pointer";
+        btn.innerHTML = `<span>${name}</span>`;
+        btn.onclick = () => selectStudent(name);
+        container.appendChild(btn);
+      });
+    }
+
+    function selectStudent(name) {
+      appState.selectedStudent = name;
+      document.getElementById("student-search-input").value = name;
+      document.getElementById("student-dropdown-list").classList.add("hidden");
+      document.getElementById("selected-student-badge").classList.remove("hidden");
+      document.getElementById("selected-student-text").textContent = name;
+    }
+
+    function renderSubjectOptions(subjects) {
+      const select = document.getElementById("subject-select");
+      select.innerHTML = "";
+      subjects.forEach(subj => {
+        const opt = document.createElement("option");
+        opt.value = subj;
+        opt.textContent = subj.toLowerCase() === "fisika" ? `${subj} (Kelas X / Fase E)` : subj;
+        select.appendChild(opt);
+      });
+      const fisikaItem = subjects.find(s => s.toLowerCase() === "fisika");
+      if (fisikaItem) {
+        select.value = fisikaItem;
+        appState.selectedSubject = fisikaItem;
+      } else if (subjects.length > 0) {
+        select.value = subjects[0];
+        appState.selectedSubject = subjects[0];
+      }
+    }
+
+    /**
+     * CEK VALIDASI PENGERJAAN ULANG & PEMULIHAN SESI LOCALSTORAGE
+     */
+    function getSubmittedStorageKey(studentName, subject) {
+      return `${EXAM_CONFIG.storagePrefix}submitted_${studentName.trim().toLowerCase()}_${subject.trim().toLowerCase()}`;
+    }
+
+    function getSessionStorageKey(studentName, subject) {
+      return `${EXAM_CONFIG.storagePrefix}session_${studentName.trim().toLowerCase()}_${subject.trim().toLowerCase()}`;
+    }
+
+    function hasAlreadySubmitted(studentName, subject) {
+      // 1. Cek localStorage
+      const localRecord = localStorage.getItem(getSubmittedStorageKey(studentName, subject));
+      if (localRecord) return true;
+
+      // 2. Cek data dari server GAS jika tersedia
+      return appState.remoteSubmittedRecords.some(rec => {
+        const rName = (rec.nama || rec.namaSiswa || rec.name || "").trim().toLowerCase();
+        const rSubj = (rec.mapel || rec.mataPelajaran || rec.subject || "").trim().toLowerCase();
+        return rName === studentName.trim().toLowerCase() && rSubj === subject.trim().toLowerCase();
+      });
+    }
+
+    function saveExamSessionToStorage() {
+      if (!appState.examActive || !appState.selectedStudent) return;
+      const key = getSessionStorageKey(appState.selectedStudent, appState.selectedSubject);
+      const sessionData = {
+        studentName: appState.selectedStudent,
+        subject: appState.selectedSubject,
+        questionOrder: appState.questionOrder,
+        currentIndex: appState.currentIndex,
+        answers: appState.answers,
+        doubtful: appState.doubtful,
+        remainingSeconds: appState.remainingSeconds,
+        startTimeISO: appState.startTimeISO,
+        tabSwitchCount: appState.tabSwitchCount
+      };
+      try {
+        localStorage.setItem(key, JSON.stringify(sessionData));
+        localStorage.setItem(`${EXAM_CONFIG.storagePrefix}active_pointer`, key);
+      } catch (e) {
+        console.warn("Gagal menyimpan sesi ke localStorage:", e);
+      }
+    }
+
+    function clearExamSessionFromStorage() {
+      const key = getSessionStorageKey(appState.selectedStudent, appState.selectedSubject);
+      localStorage.removeItem(key);
+      localStorage.removeItem(`${EXAM_CONFIG.storagePrefix}active_pointer`);
+    }
+
+    /**
+     * ALGORITMA ACAK URUTAN SOAL (FISHER-YATES SHUFFLE)
+     */
+    function shuffleQuestionIds(questions) {
+      const ids = questions.map(q => q.id);
+      for (let i = ids.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [ids[i], ids[j]] = [ids[j], ids[i]];
+      }
+      return ids;
+    }
+
+    /**
+     * MEMULAI ATAU MELANJUTKAN UJIAN
+     */
+    function handleStartExam() {
+      const inputVal = document.getElementById("student-search-input").value.trim();
+      const matchedStudent = appState.students.find(s => s.toLowerCase() === inputVal.toLowerCase());
+
+      if (!matchedStudent) {
+        showCustomModal({
+          type: "warning",
+          title: "Nama Peserta Belum Dipilih",
+          bodyHtml: "<p>Silakan pilih <strong>Nama Lengkap</strong> Anda terlebih dahulu dari daftar peserta yang tersedia sebelum memulai ujian.</p>",
+          buttons: [{ label: "Mengerti", primary: true }]
+        });
+        return;
+      }
+
+      const subject = document.getElementById("subject-select").value;
+      appState.selectedStudent = matchedStudent;
+      appState.selectedSubject = subject;
+
+      // Validasi agar siswa yang sudah mengumpulkan pada mapel yang sama tidak dapat mengerjakan ulang
+      if (hasAlreadySubmitted(matchedStudent, subject)) {
+        showCustomModal({
+          type: "danger",
+          title: "Ujian Sudah Pernah Dikumpulkan",
+          bodyHtml: `
+            <p>Peserta atas nama <strong>${matchedStudent}</strong> tercatat <strong>sudah mengumpulkan</strong> ujian untuk mata pelajaran <strong>${subject}</strong>.</p>
+            <p class="text-xs text-slate-500 mt-1">Setiap peserta hanya diperkenankan mengerjakan ujian satu kali. Hubungi pengawas jika terdapat kendala teknis.</p>
+          `,
+          buttons: [{ label: "Tutup", primary: true }]
+        });
+        return;
+      }
+
+      // Cek apakah ada sesi tersimpan (auto-resume jika browser sempat ter-refresh)
+      const savedKey = getSessionStorageKey(matchedStudent, subject);
+      const savedRaw = localStorage.getItem(savedKey);
+
+      if (savedRaw) {
+        try {
+          const parsed = JSON.parse(savedRaw);
+          if (parsed && Array.isArray(parsed.questionOrder) && parsed.remainingSeconds > 0) {
+            appState.questionOrder = parsed.questionOrder;
+            appState.currentIndex = parsed.currentIndex || 0;
+            appState.answers = parsed.answers || {};
+            appState.doubtful = parsed.doubtful || {};
+            appState.remainingSeconds = parsed.remainingSeconds;
+            appState.startTimeISO = parsed.startTimeISO || new Date().toISOString();
+            appState.tabSwitchCount = parsed.tabSwitchCount || 0;
+            launchExamInterface();
+            return;
+          }
+        } catch (e) {
+          console.warn("Sesi tersimpan tidak valid, membuat sesi baru.");
+        }
+      }
+
+      // Buat sesi ujian baru dengan urutan soal diacak
+      appState.questionOrder = shuffleQuestionIds(QUESTION_BANK);
+      appState.currentIndex = 0;
+      appState.answers = {};
+      appState.doubtful = {};
+      appState.remainingSeconds = EXAM_CONFIG.durationSeconds;
+      appState.startTimeISO = new Date().toISOString();
+      appState.tabSwitchCount = 0;
+
+      launchExamInterface();
+    }
+
+    function launchExamInterface() {
+      appState.examActive = true;
+      saveExamSessionToStorage();
+
+      document.getElementById("view-login").classList.add("hidden");
+      document.getElementById("view-receipt").classList.add("hidden");
+      document.getElementById("view-receipt").classList.remove("flex");
+      
+      const examView = document.getElementById("view-exam");
+      examView.classList.remove("hidden");
+      examView.classList.add("flex");
+
+      document.getElementById("header-student-name").textContent = `${appState.selectedStudent} • ${appState.selectedSubject}`;
+      updateTabWarningBadge();
+      renderCurrentQuestion();
+      renderNavigationGrid();
+      startCountdownTimer();
+    }
+
+    /**
+     * TIMER HITUNG MUNDUR & AUTO-SUBMIT SAAT WAKTU HABIS
+     */
+    function startCountdownTimer() {
+      if (appState.timerInterval) clearInterval(appState.timerInterval);
+      updateTimerDisplay();
+
+      appState.timerInterval = setInterval(() => {
+        if (!appState.examActive) return;
+
+        appState.remainingSeconds -= 1;
+        saveExamSessionToStorage();
+        updateTimerDisplay();
+
+        if (appState.remainingSeconds <= 0) {
+          clearInterval(appState.timerInterval);
+          appState.remainingSeconds = 0;
+          updateTimerDisplay();
+          // Kumpulkan otomatis saat waktu habis
+          submitExamData(true);
+        }
+      }, 1000);
+    }
+
+    function updateTimerDisplay() {
+      const mins = Math.floor(appState.remainingSeconds / 60);
+      const secs = appState.remainingSeconds % 60;
+      const formatted = `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+      const displayEl = document.getElementById("timer-display");
+      const boxEl = document.getElementById("timer-box");
+
+      displayEl.textContent = formatted;
+
+      // Peringatan visual saat waktu < 5 menit
+      if (appState.remainingSeconds <= 300) {
+        boxEl.classList.remove("bg-slate-900");
+        boxEl.classList.add("bg-rose-600", "animate-pulse");
+      } else {
+        boxEl.classList.add("bg-slate-900");
+        boxEl.classList.remove("bg-rose-600", "animate-pulse");
+      }
+    }
+
+    /**
+     * RENDER SOAL AKTIF SESUAI TIPE SOAL OTOMATIS
+     */
+    function getQuestionByOrderIndex(index) {
+      const qId = appState.questionOrder[index];
+      return QUESTION_BANK.find(q => q.id === qId);
+    }
+
+    function isQuestionAnswered(question) {
+      const ans = appState.answers[question.id];
+      if (!ans) return false;
+
+      if (question.type === "multiple_choice") {
+        return typeof ans === "string" && ans.length > 0;
+      }
+      if (question.type === "multiple_choice_complex") {
+        return Array.isArray(ans) && ans.length > 0;
+      }
+      if (question.type === "true_false") {
+        return question.statements.every(st => ans[st.key] === "B" || ans[st.key] === "S");
+      }
+      if (question.type === "short_answer" || question.type === "essay") {
+        return typeof ans === "string" && ans.trim().length > 0;
+      }
+      return false;
+    }
+
+    function renderCurrentQuestion() {
+      const q = getQuestionByOrderIndex(appState.currentIndex);
+      if (!q) return;
+
+      // Update Header Soal
+      document.getElementById("current-q-number").textContent = appState.currentIndex + 1;
+      const badgeEl = document.getElementById("current-q-type-badge");
+
+      const typeLabels = {
+        multiple_choice: { text: "Pilihan Ganda", cls: "bg-indigo-50 text-indigo-700 border-indigo-200" },
+        multiple_choice_complex: { text: "Pilihan Ganda Kompleks", cls: "bg-purple-50 text-purple-700 border-purple-200" },
+        true_false: { text: "Benar / Salah", cls: "bg-teal-50 text-teal-700 border-teal-200" },
+        short_answer: { text: "Isian Singkat", cls: "bg-sky-50 text-sky-700 border-sky-200" },
+        essay: { text: "Uraian / Esai", cls: "bg-amber-50 text-amber-700 border-amber-200" }
+      };
+      const meta = typeLabels[q.type] || typeLabels.multiple_choice;
+      badgeEl.textContent = meta.text;
+      badgeEl.className = `px-3 py-1 rounded-xl border text-xs font-bold ${meta.cls}`;
+
+      // Render Konten Soal & Input Jawaban
+      const container = document.getElementById("question-container");
+      let optionsHtml = "";
+
+      if (q.type === "multiple_choice") {
+        const selected = appState.answers[q.id] || "";
+        optionsHtml = `<div class="space-y-3 pt-2">` + q.options.map(opt => {
+          const isChecked = selected === opt.key;
+          return `
+            <label class="flex items-start gap-3.5 p-3.5 sm:p-4 rounded-2xl border-2 transition cursor-pointer ${
+              isChecked 
+                ? "border-brand-600 bg-brand-50/70 shadow-xs" 
+                : "border-slate-200 hover:border-brand-300 hover:bg-slate-50"
+            }">
+              <input 
+                type="radio" 
+                name="q_radio_${q.id}" 
+                value="${opt.key}" 
+                ${isChecked ? "checked" : ""}
+                onchange="handleSingleChoiceChange(${q.id}, '${opt.key}')"
+                class="sr-only"
+              />
+              <span class="w-8 h-8 rounded-xl flex items-center justify-center font-extrabold text-sm shrink-0 transition ${
+                isChecked 
+                  ? "bg-brand-600 text-white" 
+                  : "bg-slate-100 text-slate-600 border border-slate-300"
+              }">
+                ${opt.key}
+              </span>
+              <div class="flex-1 pt-0.5 text-slate-800 text-sm sm:text-[15px] leading-relaxed">${opt.text}</div>
+            </label>
+          `;
+        }).join("") + `</div>`;
+      } 
+      else if (q.type === "multiple_choice_complex") {
+        const selectedArr = Array.isArray(appState.answers[q.id]) ? appState.answers[q.id] : [];
+        optionsHtml = `
+          <div class="text-xs font-semibold text-purple-700 bg-purple-50 border border-purple-200 rounded-xl px-3.5 py-2 flex items-center gap-2">
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <span>Centang semua pernyataan yang menurut Anda benar (dapat memilih lebih dari satu jawaban).</span>
+          </div>
+          <div class="space-y-3 pt-1">
+        ` + q.options.map(opt => {
+          const isChecked = selectedArr.includes(opt.key);
+          return `
+            <label class="flex items-start gap-3.5 p-3.5 sm:p-4 rounded-2xl border-2 transition cursor-pointer ${
+              isChecked 
+                ? "border-purple-600 bg-purple-50/60 shadow-xs" 
+                : "border-slate-200 hover:border-purple-300 hover:bg-slate-50"
+            }">
+              <input 
+                type="checkbox" 
+                value="${opt.key}" 
+                ${isChecked ? "checked" : ""}
+                onchange="handleComplexChoiceChange(${q.id}, '${opt.key}', this.checked)"
+                class="w-5 h-5 mt-1 rounded accent-purple-600 cursor-pointer shrink-0"
+              />
+              <span class="w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs shrink-0 mt-0.5 ${
+                isChecked ? "bg-purple-600 text-white" : "bg-slate-100 text-slate-600"
+              }">
+                ${opt.key}
+              </span>
+              <div class="flex-1 pt-0.5 text-slate-800 text-sm sm:text-[15px] leading-relaxed">${opt.text}</div>
+            </label>
+          `;
+        }).join("") + `</div>`;
+      } 
+      else if (q.type === "true_false") {
+        const currentMap = appState.answers[q.id] || {};
+        optionsHtml = `
+          <div class="overflow-x-auto border border-slate-200 rounded-2xl">
+            <table class="w-full text-left border-collapse text-sm">
+              <thead>
+                <tr class="bg-slate-100 text-slate-700 border-b border-slate-200">
+                  <th class="py-3 px-4 font-bold w-12 text-center">No</th>
+                  <th class="py-3 px-4 font-bold">Pernyataan</th>
+                  <th class="py-3 px-3 font-bold text-center w-24">Benar</th>
+                  <th class="py-3 px-3 font-bold text-center w-24">Salah</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-200">
+                ${q.statements.map(st => {
+                  const val = currentMap[st.key] || "";
+                  return `
+                    <tr class="hover:bg-slate-50/80 transition">
+                      <td class="py-3.5 px-4 font-bold text-center text-slate-600 align-top">${st.key}</td>
+                      <td class="py-3.5 px-4 text-slate-800 leading-relaxed">${st.text}</td>
+                      <td class="py-3.5 px-3 text-center align-middle">
+                        <label class="inline-flex items-center justify-center w-full py-2 px-2 rounded-xl border cursor-pointer transition font-bold text-xs ${
+                          val === "B" 
+                            ? "bg-emerald-600 text-white border-emerald-600 shadow-xs" 
+                            : "bg-white text-slate-600 border-slate-300 hover:border-emerald-400"
+                        }">
+                          <input 
+                            type="radio" 
+                            name="tf_${q.id}_${st.key}" 
+                            value="B" 
+                            ${val === "B" ? "checked" : ""}
+                            onchange="handleTrueFalseChange(${q.id}, '${st.key}', 'B')"
+                            class="sr-only"
+                          />
+                          <span>Benar</span>
+                        </label>
+                      </td>
+                      <td class="py-3.5 px-3 text-center align-middle">
+                        <label class="inline-flex items-center justify-center w-full py-2 px-2 rounded-xl border cursor-pointer transition font-bold text-xs ${
+                          val === "S" 
+                            ? "bg-rose-600 text-white border-rose-600 shadow-xs" 
+                            : "bg-white text-slate-600 border-slate-300 hover:border-rose-400"
+                        }">
+                          <input 
+                            type="radio" 
+                            name="tf_${q.id}_${st.key}" 
+                            value="S" 
+                            ${val === "S" ? "checked" : ""}
+                            onchange="handleTrueFalseChange(${q.id}, '${st.key}', 'S')"
+                            class="sr-only"
+                          />
+                          <span>Salah</span>
+                        </label>
+                      </td>
+                    </tr>
+                  `;
+                }).join("")}
+              </tbody>
+            </table>
+          </div>
+        `;
+      }
+      else if (q.type === "short_answer" || q.type === "essay") {
+        const textVal = appState.answers[q.id] || "";
+        optionsHtml = `
+          <div class="pt-2">
+            <label class="block text-xs font-bold text-slate-600 mb-2">Tuliskan jawaban Anda di bawah ini:</label>
+            <textarea 
+              rows="${q.type === 'essay' ? 5 : 2}"
+              oninput="handleTextAnswerChange(${q.id}, this.value)"
+              placeholder="Ketik jawaban Anda dengan jelas..."
+              class="w-full p-4 rounded-2xl border border-slate-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 text-sm text-slate-800"
+            >${textVal}</textarea>
+          </div>
+        `;
+      }
+
+      container.innerHTML = `
+        <div class="space-y-3 text-slate-800">${q.stem}</div>
+        ${optionsHtml}
+      `;
+
+      // Update status checkbox Ragu-ragu
+      document.getElementById("checkbox-doubtful").checked = Boolean(appState.doubtful[q.id]);
+
+      // Update tombol Sebelumnya / Selanjutnya
+      document.getElementById("btn-prev").disabled = appState.currentIndex === 0;
+      const isLast = appState.currentIndex === appState.questionOrder.length - 1;
+      const nextBtnText = document.getElementById("btn-next-text");
+      const nextBtn = document.getElementById("btn-next");
+      if (isLast) {
+        nextBtnText.textContent = "Selesai & Kumpulkan";
+        nextBtn.classList.remove("bg-brand-700", "hover:bg-brand-800");
+        nextBtn.classList.add("bg-emerald-600", "hover:bg-emerald-700");
+      } else {
+        nextBtnText.textContent = "Selanjutnya";
+        nextBtn.classList.add("bg-brand-700", "hover:bg-brand-800");
+        nextBtn.classList.remove("bg-emerald-600", "hover:bg-emerald-700");
+      }
+    }
+
+    /**
+     * HANDLER PERUBAHAN JAWABAN & AUTO-SAVE
+     */
+    window.handleSingleChoiceChange = function(qId, optionKey) {
+      appState.answers[qId] = optionKey;
+      saveExamSessionToStorage();
+      renderCurrentQuestion();
+      renderNavigationGrid();
+    };
+
+    window.handleComplexChoiceChange = function(qId, optionKey, isChecked) {
+      let current = Array.isArray(appState.answers[qId]) ? [...appState.answers[qId]] : [];
+      if (isChecked) {
+        if (!current.includes(optionKey)) current.push(optionKey);
+      } else {
+        current = current.filter(k => k !== optionKey);
+      }
+      current.sort();
+      appState.answers[qId] = current;
+      saveExamSessionToStorage();
+      renderCurrentQuestion();
+      renderNavigationGrid();
+    };
+
+    window.handleTrueFalseChange = function(qId, statementKey, value) {
+      const current = typeof appState.answers[qId] === "object" && appState.answers[qId] !== null
+        ? { ...appState.answers[qId] }
+        : {};
+      current[statementKey] = value;
+      appState.answers[qId] = current;
+      saveExamSessionToStorage();
+      renderCurrentQuestion();
+      renderNavigationGrid();
+    };
+
+    window.handleTextAnswerChange = function(qId, textValue) {
+      appState.answers[qId] = textValue;
+      saveExamSessionToStorage();
+      renderNavigationGrid();
+    };
+
+    /**
+     * PANEL NAVIGASI NOMOR SOAL (HIJAU = TERJAWAB, KUNING = RAGU-RAGU, ABU-ABU = BELUM)
+     */
+    function renderNavigationGrid() {
+      const grid = document.getElementById("question-nav-grid");
+      grid.innerHTML = "";
+
+      let answeredCount = 0;
+
+      appState.questionOrder.forEach((qId, idx) => {
+        const q = QUESTION_BANK.find(item => item.id === qId);
+        const answered = isQuestionAnswered(q);
+        const isDoubt = Boolean(appState.doubtful[qId]);
+        const isCurrent = idx === appState.currentIndex;
+
+        if (answered) answeredCount++;
+
+        let colorClasses = "bg-slate-200 text-slate-700 border-slate-300 hover:bg-slate-300";
+        if (isDoubt) {
+          colorClasses = "bg-amber-400 text-amber-950 border-amber-500 hover:bg-amber-500";
+        } else if (answered) {
+          colorClasses = "bg-emerald-600 text-white border-emerald-700 hover:bg-emerald-700";
+        }
+
+        const ringClass = isCurrent ? "ring-2 ring-offset-2 ring-slate-900 scale-105" : "";
+
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.textContent = idx + 1;
+        btn.className = `h-10 rounded-xl border font-extrabold text-xs transition flex items-center justify-center cursor-pointer ${colorClasses} ${ringClass}`;
+        btn.onclick = () => {
+          appState.currentIndex = idx;
+          saveExamSessionToStorage();
+          renderCurrentQuestion();
+          renderNavigationGrid();
+          // Tutup drawer mobile jika terbuka
+          document.getElementById("nav-sidebar").classList.add("hidden");
+        };
+        grid.appendChild(btn);
+      });
+
+      document.getElementById("nav-progress-summary").textContent = `${answeredCount} dari ${appState.questionOrder.length} soal terjawab`;
+    }
+
+    /**
+     * SISTEM ANTI-CURANG: DETEKSI PINDAH TAB / KELUAR APLIKASI
+     */
+    function handleVisibilityViolation() {
+      if (!appState.examActive || appState.isSubmitting) return;
+
+      const now = Date.now();
+      // Debounce 1.5 detik agar satu perpindahan tidak terhitung ganda
+      if (now - appState.lastTabWarningTime < 1500) return;
+      appState.lastTabWarningTime = now;
+
+      appState.tabSwitchCount += 1;
+      saveExamSessionToStorage();
+      updateTabWarningBadge();
+
+      showCustomModal({
+        type: "warning",
+        title: "Peringatan Integritas Ujian",
+        bodyHtml: `
+          <p>Sistem mendeteksi Anda berpindah tab atau keluar dari halaman ujian.</p>
+          <p class="font-semibold text-amber-800">Total pelanggaran tercatat: <span class="px-2 py-0.5 rounded bg-rose-100 text-rose-700">${appState.tabSwitchCount} kali</span></p>
+          <p class="text-xs text-slate-500 mt-1">Catatan aktivitas ini akan dikirimkan otomatis ke laporan guru. Harap tetap fokus pada halaman ujian hingga selesai.</p>
+        `,
+        buttons: [{ label: "Saya Mengerti & Lanjutkan Ujian", primary: true }]
+      });
+    }
+
+    function updateTabWarningBadge() {
+      const badge = document.getElementById("tab-warning-badge");
+      const countEl = document.getElementById("tab-warning-count");
+      countEl.textContent = appState.tabSwitchCount;
+      if (appState.tabSwitchCount > 0) {
+        badge.classList.remove("hidden");
+        badge.classList.add("flex");
+      }
+    }
+
+    /**
+     * PERHITUNGAN SKOR OTOMATIS OBJEKTIF & PENYUSUNAN DETAIL JAWABAN JSON
+     */
+    function evaluateExamResults() {
+      const totalObjectiveQuestions = QUESTION_BANK.filter(q => q.type !== "essay").length;
+      const maxPointsPerQuestion = totalObjectiveQuestions > 0 ? (100 / totalObjectiveQuestions) : 0;
+
+      let totalScore = 0;
+      let correctCount = 0;
+      const details = [];
+
+      // Urutkan laporan berdasarkan nomor kartu soal asli (1..25) agar guru mudah memeriksa di Spreadsheet
+      QUESTION_BANK.forEach(q => {
+        const studentAns = appState.answers[q.id];
+        let earnedPoints = 0;
+        let status = "Belum Dijawab";
+
+        if (q.type === "multiple_choice") {
+          if (studentAns) {
+            if (studentAns === q.answerKey) {
+              earnedPoints = maxPointsPerQuestion;
+              correctCount += 1;
+              status = "Benar";
+            } else {
+              status = "Salah";
+            }
+          }
+        } 
+        else if (q.type === "multiple_choice_complex") {
+          if (Array.isArray(studentAns) && studentAns.length > 0) {
+            const correctSet = new Set(q.answerKey);
+            let truePositives = 0;
+            let falsePositives = 0;
+
+            studentAns.forEach(choice => {
+              if (correctSet.has(choice)) truePositives++;
+              else falsePositives++;
+            });
+
+            if (truePositives === q.answerKey.length && falsePositives === 0) {
+              earnedPoints = maxPointsPerQuestion;
+              correctCount += 1;
+              status = "Benar Sempurna";
+            } else {
+              // Penilaian proporsional untuk PG Kompleks
+              const ratio = Math.max(0, (truePositives - falsePositives) / q.answerKey.length);
+              earnedPoints = Number((ratio * maxPointsPerQuestion).toFixed(2));
+              status = ratio > 0 ? "Benar Sebagian" : "Salah";
+            }
+          }
+        } 
+        else if (q.type === "true_false") {
+          if (studentAns && typeof studentAns === "object") {
+            let subCorrect = 0;
+            q.statements.forEach(st => {
+              if (studentAns[st.key] === q.answerKey[st.key]) {
+                subCorrect++;
+              }
+            });
+
+            if (subCorrect === q.statements.length) {
+              earnedPoints = maxPointsPerQuestion;
+              correctCount += 1;
+              status = "Benar Semua";
+            } else if (subCorrect > 0) {
+              earnedPoints = Number(((subCorrect / q.statements.length) * maxPointsPerQuestion).toFixed(2));
+              status = `Benar ${subCorrect}/${q.statements.length}`;
+            } else {
+              status = "Salah";
+            }
+          }
+        } 
+        else if (q.type === "short_answer") {
+          if (typeof studentAns === "string" && studentAns.trim().length > 0) {
+            const normalizedStudent = studentAns.trim().toLowerCase();
+            const normalizedKey = String(q.answerKey).trim().toLowerCase();
+            if (normalizedStudent === normalizedKey) {
+              earnedPoints = maxPointsPerQuestion;
+              correctCount += 1;
+              status = "Benar";
+            } else {
+              status = "Salah";
+            }
+          }
+        } 
+        else if (q.type === "essay") {
+          status = (typeof studentAns === "string" && studentAns.trim().length > 0)
+            ? "Menunggu Koreksi Guru"
+            : "Tidak Dijawab";
+        }
+
+        totalScore += earnedPoints;
+
+        details.push({
+          noSoalAsli: q.id,
+          tipe: q.type,
+          jawabanSiswa: studentAns || null,
+          kunciJawaban: q.type === "essay" ? "(Uraian/Esai)" : q.answerKey,
+          status: status,
+          poin: Number(earnedPoints.toFixed(2))
+        });
+      });
+
+      return {
+        finalScore: Number(totalScore.toFixed(2)),
+        correctCount,
+        totalQuestions: QUESTION_BANK.length,
+        details
+      };
+    }
+
+    /**
+     * KONFIRMASI & PENGIRIMAN HASIL UJIAN KE GOOGLE APPS SCRIPT (POST text/plain)
+     */
+    function promptSubmitConfirmation() {
+      const unansweredCount = appState.questionOrder.filter(qId => {
+        const q = QUESTION_BANK.find(item => item.id === qId);
+        return !isQuestionAnswered(q);
+      }).length;
+
+      const doubtfulCount = Object.values(appState.doubtful).filter(Boolean).length;
+
+      let warningHtml = "";
+      if (unansweredCount > 0 || doubtfulCount > 0) {
+        warningHtml = `
+          <div class="mt-2 p-3 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-900 space-y-1">
+            ${unansweredCount > 0 ? `<p>• Masih ada <strong>${unansweredCount} soal</strong> yang belum dijawab.</p>` : ""}
+            ${doubtfulCount > 0 ? `<p>• Masih ada <strong>${doubtfulCount} soal</strong> yang ditandai ragu-ragu.</p>` : ""}
+          </div>
+        `;
+      }
+
+      showCustomModal({
+        type: "confirm",
+        title: "Kumpulkan Jawaban Ujian?",
+        bodyHtml: `
+          <p>Apakah Anda yakin ingin mengakhiri ujian dan mengirimkan seluruh jawaban sekarang?</p>
+          ${warningHtml}
+          <p class="text-xs text-slate-500 mt-2">Setelah dikumpulkan, Anda tidak dapat mengubah jawaban maupun mengerjakan ulang mata pelajaran ini.</p>
+        `,
+        buttons: [
+          { label: "Periksa Kembali", primary: false },
+          {
+            label: "Ya, Kumpulkan Sekarang",
+            primary: true,
+            onClick: () => submitExamData(false)
+          }
+        ]
+      });
+    }
+
+    async function submitExamData(isAutoSubmit = false) {
+      if (appState.isSubmitting) return;
+      appState.isSubmitting = true;
+      appState.examActive = false;
+
+      if (appState.timerInterval) clearInterval(appState.timerInterval);
+
+      const elapsedSeconds = Math.max(1, EXAM_CONFIG.durationSeconds - appState.remainingSeconds);
+      const elapsedMins = Math.floor(elapsedSeconds / 60);
+      const elapsedSecs = elapsedSeconds % 60;
+      const durationText = `${elapsedMins} menit ${elapsedSecs} detik`;
+
+      const now = new Date();
+      const timestampFormatted = now.toLocaleString("id-ID", {
+        dateStyle: "full",
+        timeStyle: "medium"
+      });
+
+      const evaluation = evaluateExamResults();
+
+      const payload = {
+        timestamp: now.toISOString(),
+        waktuLokal: timestampFormatted,
+        namaSiswa: appState.selectedStudent,
+        kelas: EXAM_CONFIG.classPhase,
+        mataPelajaran: appState.selectedSubject,
+        skorObjektif: evaluation.finalScore,
+        jumlahBenar: evaluation.correctCount,
+        totalSoalObjektif: evaluation.totalQuestions,
+        detailJawaban: JSON.stringify({
+          ringkasan: `${evaluation.correctCount}/${evaluation.totalQuestions} benar penuh`,
+          metodePengumpulan: isAutoSubmit ? "Otomatis (Waktu Habis)" : "Manual oleh Siswa",
+          butirSoal: evaluation.details
+        }),
+        jumlahPindahTab: appState.tabSwitchCount,
+        durasiPengerjaan: durationText
+      };
+
+      showLoader(
+        isAutoSubmit ? "Waktu Ujian Habis!" : "Mengirim Jawaban...",
+        "Menyimpan hasil ujian ke server SMA IT Al Ishlah"
+      );
+
+      let serverSavedStatus = "Tersimpan di Server Sekolah";
+
+      try {
+        if (GAS_URL && GAS_URL !== "MASUKKAN_URL_WEB_APP_GAS_DI_SINI" && GAS_URL.startsWith("http")) {
+          // Menggunakan Content-Type text/plain agar bebas kendala CORS preflight di Google Apps Script
+          const postRes = await fetch(GAS_URL, {
+            method: "POST",
+            headers: {
+              "Content-Type": "text/plain;charset=utf-8"
+            },
+            body: JSON.stringify(payload)
+          });
+          if (postRes.ok) {
+            const resJson = await postRes.json();
+            if (resJson && resJson.status === "error") {
+              throw new Error(resJson.message || "Gagal menyimpan di server.");
+            }
+          }
+        } else {
+          // Simulasi jeda pengiriman pada mode lokal
+          await new Promise(resolve => setTimeout(resolve, 900));
+          serverSavedStatus = "Tersimpan (Mode Simulasi Lokal)";
+        }
+
+        // Tandai siswa + mapel ini sudah selesai di localStorage agar tidak bisa mengerjakan ulang
+        localStorage.setItem(
+          getSubmittedStorageKey(appState.selectedStudent, appState.selectedSubject),
+          JSON.stringify({
+            submittedAt: now.toISOString(),
+            student: appState.selectedStudent,
+            subject: appState.selectedSubject
+          })
+        );
+        clearExamSessionFromStorage();
+
+        // Tampilkan Halaman Bukti Pengumpulan (TANPA menampilkan skor/nilai ke siswa)
+        document.getElementById("view-exam").classList.add("hidden");
+        document.getElementById("view-exam").classList.remove("flex");
+        
+        const receiptView = document.getElementById("view-receipt");
+        receiptView.classList.remove("hidden");
+        receiptView.classList.add("flex");
+
+        document.getElementById("receipt-name").textContent = appState.selectedStudent;
+        document.getElementById("receipt-subject").textContent = appState.selectedSubject;
+        document.getElementById("receipt-timestamp").textContent = timestampFormatted;
+        document.getElementById("receipt-duration").textContent = durationText;
+        document.getElementById("receipt-server-status").innerHTML = `
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          ${serverSavedStatus}
+        `;
+      } catch (error) {
+        console.error("Error saat mengirim jawaban ke GAS:", error);
+        appState.isSubmitting = false;
+        appState.examActive = true;
+        startCountdownTimer();
+
+        showCustomModal({
+          type: "danger",
+          title: "Gagal Mengirim Jawaban",
+          bodyHtml: `
+            <p>Terjadi gangguan jaringan saat mengirim jawaban ke server sekolah.</p>
+            <p class="text-xs text-slate-500 mt-1">Jangan khawatir, seluruh jawaban Anda masih aman tersimpan di perangkat ini. Periksa koneksi internet Anda lalu tekan tombol <strong>Kumpulkan Ujian</strong> kembali.</p>
+          `,
+          buttons: [{ label: "Tutup & Coba Lagi", primary: true }]
+        });
+      } finally {
+        hideLoader();
+      }
+    }
+
+    /**
+     * INISIALISASI EVENT LISTENERS SAAT HALAMAN DIMUAT
+     */
+    document.addEventListener("DOMContentLoaded", () => {
+      // Ambil daftar siswa dan mapel dari GAS
+      fetchInitialDataFromGAS();
+
+      // Event pencarian nama siswa
+      const searchInput = document.getElementById("student-search-input");
+      const dropdownList = document.getElementById("student-dropdown-list");
+      const dropdownToggle = document.getElementById("student-dropdown-toggle");
+
+      searchInput.addEventListener("focus", () => {
+        const keyword = searchInput.value.trim().toLowerCase();
+        const filtered = appState.students.filter(name => name.toLowerCase().includes(keyword));
+        renderStudentDropdown(filtered);
+        dropdownList.classList.remove("hidden");
+      });
+
+      searchInput.addEventListener("input", (e) => {
+        const keyword = e.target.value.trim().toLowerCase();
+        appState.selectedStudent = "";
+        document.getElementById("selected-student-badge").classList.add("hidden");
+        const filtered = appState.students.filter(name => name.toLowerCase().includes(keyword));
+        renderStudentDropdown(filtered);
+        dropdownList.classList.remove("hidden");
+      });
+
+      dropdownToggle.addEventListener("click", () => {
+        if (dropdownList.classList.contains("hidden")) {
+          renderStudentDropdown(appState.students);
+          dropdownList.classList.remove("hidden");
+          searchInput.focus();
+        } else {
+          dropdownList.classList.add("hidden");
+        }
+      });
+
+      // Tutup dropdown jika klik di luar combobox
+      document.addEventListener("click", (e) => {
+        const wrapper = document.getElementById("student-combobox-wrapper");
+        if (wrapper && !wrapper.contains(e.target)) {
+          dropdownList.classList.add("hidden");
+        }
+      });
+
+      // Tombol Mulai Ujian
+      document.getElementById("btn-start-exam").addEventListener("click", handleStartExam);
+
+      // Navigasi Sebelumnya & Selanjutnya
+      document.getElementById("btn-prev").addEventListener("click", () => {
+        if (appState.currentIndex > 0) {
+          appState.currentIndex -= 1;
+          saveExamSessionToStorage();
+          renderCurrentQuestion();
+          renderNavigationGrid();
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+      });
+
+      document.getElementById("btn-next").addEventListener("click", () => {
+        if (appState.currentIndex < appState.questionOrder.length - 1) {
+          appState.currentIndex += 1;
+          saveExamSessionToStorage();
+          renderCurrentQuestion();
+          renderNavigationGrid();
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        } else {
+          promptSubmitConfirmation();
+        }
+      });
+
+      // Checkbox Ragu-ragu
+      document.getElementById("checkbox-doubtful").addEventListener("change", (e) => {
+        const q = getQuestionByOrderIndex(appState.currentIndex);
+        if (!q) return;
+        appState.doubtful[q.id] = e.target.checked;
+        saveExamSessionToStorage();
+        renderNavigationGrid();
+      });
+
+      // Drawer Navigasi Soal (Mobile)
+      const navSidebar = document.getElementById("nav-sidebar");
+      document.getElementById("btn-toggle-nav-drawer").addEventListener("click", () => {
+        navSidebar.classList.remove("hidden");
+      });
+      document.getElementById("btn-close-nav-drawer").addEventListener("click", () => {
+        navSidebar.classList.add("hidden");
+      });
+      navSidebar.addEventListener("click", (e) => {
+        if (e.target === navSidebar) {
+          navSidebar.classList.add("hidden");
+        }
+      });
+
+      // Tombol Kumpulkan Ujian
+      document.getElementById("btn-submit-exam").addEventListener("click", () => {
+        navSidebar.classList.add("hidden");
+        promptSubmitConfirmation();
+      });
+
+      // Tombol Kembali ke Halaman Awal dari Bukti Pengumpulan
+      document.getElementById("btn-back-home").addEventListener("click", () => {
+        window.location.reload();
+      });
+
+      // Deteksi Anti-Curang (visibilitychange)
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden) {
+          handleVisibilityViolation();
+        }
+      });
+
+      // Pemulihan otomatis jika browser tidak sengaja ter-refresh saat ujian sedang berlangsung
+      const activePointer = localStorage.getItem(`${EXAM_CONFIG.storagePrefix}active_pointer`);
+      if (activePointer) {
+        const savedSessionRaw = localStorage.getItem(activePointer);
+        if (savedSessionRaw) {
+          try {
+            const session = JSON.parse(savedSessionRaw);
+            if (session && session.studentName && session.subject && session.remainingSeconds > 0) {
+              if (!hasAlreadySubmitted(session.studentName, session.subject)) {
+                appState.selectedStudent = session.studentName;
+                appState.selectedSubject = session.subject;
+                appState.questionOrder = session.questionOrder;
+                appState.currentIndex = session.currentIndex || 0;
+                appState.answers = session.answers || {};
+                appState.doubtful = session.doubtful || {};
+                appState.remainingSeconds = session.remainingSeconds;
+                appState.startTimeISO = session.startTimeISO || new Date().toISOString();
+                appState.tabSwitchCount = session.tabSwitchCount || 0;
+                launchExamInterface();
+              }
+            }
+          } catch (e) {
+            console.warn("Gagal memulihkan sesi aktif:", e);
+          }
+        }
+      }
+    });
+  </script>
+</body>
+</html>
